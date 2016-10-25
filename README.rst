@@ -2,7 +2,7 @@
 OVP Search
 ==========
 
-.. image:: https://app.codeship.com/projects/PLACEHOLDER/status?branch=master
+.. image:: https://app.codeship.com/projects/58b28a40-7d1d-0134-1441-32b74bfe7659/status?branch=master
 .. image:: https://codecov.io/gh/OpenVolunteeringPlatform/django-ovp-search/branch/master/graph/badge.svg
   :target: https://codecov.io/gh/OpenVolunteeringPlatform/django-ovp-search
 .. image:: https://badge.fury.io/py/ovp-search.svg
