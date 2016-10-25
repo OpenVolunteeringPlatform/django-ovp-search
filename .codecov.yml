@@ -1,0 +1,10 @@
+codecov:
+  slug: "OpenVolunteeringPlatform/django-ovp-core"
+  branch: master
+  bot: leonardoarroyo
+
+
+coverage:
+  precision: 2
+  round: down
+  range: 50...100
