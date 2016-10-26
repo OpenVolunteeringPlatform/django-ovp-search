@@ -14,7 +14,7 @@ Getting Started
 ---------------
 Prerequisites
 """"""""""""""
-This module relies on django-haystack to do full-text search. It was implemented and tested on top of ElasticSearch.
+This module relies on django-haystack to do full-text search. It was implemented and tested on top of ElasticSearch but should work with any backend.
 
 Installing
 """"""""""""""
@@ -23,6 +23,18 @@ Installing
     pip install ovp-search
 
 2. Add it to `INSTALLED_APPS` on `settings.py`
+
+3. Add `haystack` to `INSTALLED_APPS`
+
+4. Set up haystack connection::
+
+    HAYSTACK_CONNECTIONS = {
+      'default': {
+        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+        'URL': 'http://%s/' % (os.environ.get('HS_SEARCH_ENDPOINT', '127.0.0.1:9200')),
+        'INDEX_NAME': 'atadosovp'
+      },
+    }
 
 
 Forking
