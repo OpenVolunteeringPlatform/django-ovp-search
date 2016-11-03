@@ -15,7 +15,8 @@ class ProjectList(mixins.ListModelMixin, viewsets.GenericViewSet):
 
   def get_queryset(self):
     params = self.request.GET
-
+    if params:
+      return Project.objects.all();
     #nonprofit = params.get('nonprofit', None)
 
     key = 'projects-{}'.format(hash(frozenset(params.items())))
