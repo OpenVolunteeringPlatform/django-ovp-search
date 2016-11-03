@@ -3,11 +3,14 @@ from ovp_projects import models
 
 from django.core.cache import cache
 
-from rest_framework import generics
+from rest_framework import viewsets
+from rest_framework import mixins
+from rest_framework.decorators import list_route
 
 from haystack.query import SearchQuerySet
 
-class ProjectList(generics.ListAPIView):
+
+class ProjectList(mixins.ListModelMixin, viewsets.GenericViewSet):
   serializer_class = serializers.ProjectSearchSerializer
 
   def get_queryset(self):
@@ -90,7 +93,40 @@ class ProjectList(generics.ListAPIView):
       # TODO: Find a solution
       result_keys = [q.pk for q in queryset]
       result = models.Project.objects.filter(pk__in=result_keys, deleted=False, published=True, closed=False).prefetch_related('skills', 'causes', 'work__availabilities').select_related('job', 'work', 'address').order_by('-highlighted')
-
+      print(result)
       cache.set(key, result, cache_ttl)
 
     return result
+
+
+  @list_route(methods=['get'])
+  def query_country(self, request, country_code='us'):
+    if country_code == 'us':
+      country_name = 'United States'
+
+    h_country_projects = Project.objects.filter(address__country__name=country_name).limit(9)
+
+    city_list = []
+    projects_city_list = Project.objects.filter(
+      address__address_components__long_name__exact=country_name,
+      address__address_components__types__name__exact="country"
+      ).select_related('addressess').only('address__city_state').all()
+
+    for city in projects_city_list:
+      city = city.split(',')
+      if city[0]:
+        city_list.push(city[0].strip())
+
+    return city_list
+
+  @list_route(methods=['get'])
+  def query_city(self, request, country_code, city_name):
+    if country_code == 'us':
+      country_name = 'United States'
+
+    projects_list = Project.objects.filter(
+      address__address_components__long_name__exact=country_name,
+      address__address_components__types__name__exact="country"
+      ).select_related('addressess').all()
+
+    return projects_list
