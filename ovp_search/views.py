@@ -23,7 +23,7 @@ class ProjectList(mixins.ListModelMixin, viewsets.GenericViewSet):
     result = cache.get(key)
 
     # Do not cache nonprofit results
-    if not result or nonprofit:
+    if not result:
       query = params.get('query', None)
       cause = params.get('cause', None)
       skill = params.get('skill', None)
