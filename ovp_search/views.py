@@ -93,7 +93,6 @@ class ProjectList(mixins.ListModelMixin, viewsets.GenericViewSet):
       # TODO: Find a solution
       result_keys = [q.pk for q in queryset]
       result = models.Project.objects.filter(pk__in=result_keys, deleted=False, published=True, closed=False).prefetch_related('skills', 'causes', 'work__availabilities').select_related('job', 'work', 'address').order_by('-highlighted')
-      print(result)
       cache.set(key, result, cache_ttl)
 
     return result
