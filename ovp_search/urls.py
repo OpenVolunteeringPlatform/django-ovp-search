@@ -4,7 +4,7 @@ from ovp_search import views
 
 
 router = routers.DefaultRouter()
-router.register(r'search', views.ProjectList, 'projects-list')
+router.register(r'search', views.SearchResource, 'search-list')
 
 
 urlpatterns = [

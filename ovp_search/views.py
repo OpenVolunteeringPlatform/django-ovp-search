@@ -10,7 +10,7 @@ from rest_framework.decorators import list_route
 from haystack.query import SearchQuerySet
 
 
-class ProjectList(mixins.ListModelMixin, viewsets.GenericViewSet):
+class SearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
   serializer_class = serializers.ProjectSearchSerializer
 
   def get_queryset(self):
