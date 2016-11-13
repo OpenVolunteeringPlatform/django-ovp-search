@@ -14,6 +14,12 @@ v0.1.1
 * Create project indexes
 * ProjectListView
 
+v0.1.2
+-----------
+* Upgrade django-rest-framework to 3.5.3
+* Rename ProjectList resource to SearchResource
+
+
 v1.0.0[unreleased]
 -----------
 * TODO: Implement tests for projectlistview
