@@ -22,6 +22,7 @@ v0.1.2
 v0.1.3
 -----------
 * Upgrade ovp-projects to 1.0.0
+* Fix license name on README
 
 v1.0.0[unreleased]
 -----------
