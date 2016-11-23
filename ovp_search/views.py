@@ -1,4 +1,4 @@
-from ovp_projects import serializers
+from ovp_projects.serializers.project import ProjectSearchSerializer
 from ovp_projects import models
 
 from django.core.cache import cache
@@ -11,7 +11,7 @@ from haystack.query import SearchQuerySet
 
 
 class SearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
-  serializer_class = serializers.ProjectSearchSerializer
+  serializer_class = ProjectSearchSerializer
 
   def get_queryset(self):
     params = self.request.GET

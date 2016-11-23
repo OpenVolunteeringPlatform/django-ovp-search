@@ -19,6 +19,9 @@ v0.1.2
 * Upgrade django-rest-framework to 3.5.3
 * Rename ProjectList resource to SearchResource
 
+v0.1.3
+-----------
+* Upgrade ovp-projects to 1.0.0
 
 v1.0.0[unreleased]
 -----------
