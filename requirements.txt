@@ -2,5 +2,5 @@ codecov==2.0.5
 coverage==4.2
 Django==1.10.1
 djangorestframework==3.5.3
-ovp_projects==1.0.0
+ovp_projects==1.0.1
 django-haystack==2.5.0
