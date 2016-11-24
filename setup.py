@@ -25,5 +25,6 @@ setup(
       'ovp-core>=1.0.0,<1.1.0',
       'ovp-uploads>=1.0.0,<1.1.0',
       'ovp-organizations>=0.1.2,<1.0.0',
+      'whoosh>=2.7.4,<2.8.0',
     ]
 )

@@ -109,7 +109,13 @@ settings.configure(
     ],
     DEFAULT_SEND_EMAIL='sync',
     REST_FRAMEWORK=REST_FRAMEWORK,
-    AUTH_PASSWORD_VALIDATORS=AUTH_PASSWORD_VALIDATORS
+    AUTH_PASSWORD_VALIDATORS=AUTH_PASSWORD_VALIDATORS,
+    HAYSTACK_CONNECTIONS={
+    'default': {
+      'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
+      'PATH': os.path.join('/tmp', 'whoosh_index'),
+      },
+    }
 )
 
 django.setup()
