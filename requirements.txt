@@ -2,11 +2,10 @@ codecov==2.0.5
 coverage==4.2
 Django==1.10.1
 djangorestframework==3.5.3
-ovp_projects==1.0.1
-ovp_core==1.0.7
+ovp-core==1.0.7
 ovp-users==1.0.10
 ovp-uploads==1.0.0
-ovp-organizations==0.1.2
-ovp-projects==1.0.3
-django-haystack==2.5.0
+ovp-organizations==0.1.3
+ovp-projects==1.0.2
+django-haystack==2.5.1
 whoosh==2.7.4
