@@ -1,14 +1,17 @@
 from ovp_projects.serializers.project import ProjectSearchSerializer
 from ovp_projects import models
 
+from ovp_search import helpers
+
 from django.core.cache import cache
 
 from rest_framework import viewsets
 from rest_framework import mixins
 from rest_framework import response
-from rest_framework.decorators import list_route
+from rest_framework import decorators
 
 from haystack.query import SearchQuerySet
+from haystack.inputs import Raw
 
 
 class SearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
@@ -99,24 +102,24 @@ class SearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
     return result
 
 
-  @list_route(methods=['get'])
-  def query_country(self, request, country_code='us'):
-    #if country_code == 'us':
-    #  country_name = 'United States'
+@decorators.api_view(["GET"])
+def query_country(request, country):
+  available_cities = []
 
-    #h_country_projects = models.Project.objects.filter(address__country__name=country_name).limit(9)
+  search_term = "{}-country".format(country)
 
-    #city_list = []
-    #projects_city_list = models.Project.objects.filter(
-    #  address__address_components__long_name__exact=country_name,
-    #  address__address_components__types__name__exact="country"
-    #  ).select_related('addressess').only('address__city_state').all()
+  if helpers.is_whoosh_backend():
+    search_term = Raw("(\"{}\")".format(search_term))
 
-    #for city in projects_city_list:
-    #  city = city.split(',')
-    #  if city[0]:
-    #    city_list.push(city[0].strip())
+  queryset = SearchQuerySet().models(models.Project).filter(address_components__exact=search_term)
 
-    queryset = SearchQuerySet().models(models.Project)
+  for project in queryset:
+    for comp in project.address_components:
+      if "-locality" in comp:
+        city_name = comp.replace("-locality", "")
+        if city_name not in available_cities:
+          available_cities.append(city_name)
 
-    return response.Response({})
+  available_cities.sort()
+
+  return response.Response(available_cities)
