@@ -20,6 +20,7 @@ CUSTOM_INSTALLED_APPS = (
     'ovp_projects',
     'ovp_organizations',
     'ovp_search',
+    'haystack',
     'django.contrib.admin',
 )
 
@@ -115,7 +116,8 @@ settings.configure(
       'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
       'PATH': os.path.join('/tmp', 'whoosh_index'),
       },
-    }
+    },
+    HAYSTACK_SIGNAL_PROCESSOR='ovp_search.signals.TiedModelRealtimeSignalProcessor',
 )
 
 django.setup()
