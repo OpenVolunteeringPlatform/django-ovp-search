@@ -11,7 +11,6 @@ from rest_framework import response
 from rest_framework import decorators
 
 from haystack.query import SearchQuerySet
-from haystack.inputs import Raw
 
 
 class SearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
@@ -106,11 +105,7 @@ class SearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
 def query_country(request, country):
   available_cities = []
 
-  search_term = "{}-country".format(country)
-
-  if helpers.is_whoosh_backend():
-    search_term = Raw("(\"{}\")".format(search_term))
-
+  search_term = helpers.whoosh_raw("{}-country".format(country))
   queryset = SearchQuerySet().models(models.Project).filter(address_components__exact=search_term)
 
   for project in queryset:
