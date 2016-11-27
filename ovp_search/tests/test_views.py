@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.core.management import call_command
 
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
@@ -8,9 +9,10 @@ from ovp_projects.models import Project
 from ovp_core.models import GoogleAddress
 
 
-
 class CityCountryTestCase(TestCase):
   def setUp(self):
+    call_command('clear_index', '--noinput', verbosity=0)
+
     # Create sample projects
     user = User.objects.create_user(email="testmail@test.com", password="test_returned")
     user.save()
@@ -48,15 +50,3 @@ class CityCountryTestCase(TestCase):
     self.assertTrue("New York" in response.data)
 
 
-class AddressTestCase(TestCase):
-  """
-    RealTimeSignalProcessor handles updates to a index tied to a model
-
-    We need to be able to detect changes to a model a rebuild another index,
-    such as detecting changes to GoogleAddress and updating the index
-    for projects and organizations.
-
-    This is what this class tests.
-
-  """
-  pass
