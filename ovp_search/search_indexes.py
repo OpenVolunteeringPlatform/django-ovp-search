@@ -16,13 +16,10 @@ class AddressComponentsMixin:
   def prepare_address_components(self, obj):
     types = []
 
-    try:
-      if obj.address:
-        for component in obj.address.address_components.all():
-          for component_type in component.types.all():
-            types.append(u'{}-{}'.format(component.long_name, component_type.name))
-    except GoogleAddress.DoesNotExist:
-      pass
+    if obj.address:
+      for component in obj.address.address_components.all():
+        for component_type in component.types.all():
+          types.append(u'{}-{}'.format(component.long_name, component_type.name))
 
     return types
 

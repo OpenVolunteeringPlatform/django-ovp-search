@@ -94,13 +94,13 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
   def get_queryset(self):
     params = self.request.GET
 
+    # TODO: Implement when Organization has slug
     #nonprofit = params.get('nonprofit', None)
 
     key = 'projects-{}'.format(hash(frozenset(params.items())))
     cache_ttl = 120
     result = cache.get(key)
 
-    # Do not cache nonprofit results
     if not result:
       query = params.get('query', None)
       cause = params.get('cause', None)
@@ -110,6 +110,7 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
 
       queryset = SearchQuerySet().models(Project)
 
+      # TODO: Implement when Organization has slug
       #if nonprofit:
       #  nonprofit = Nonprofit.objects.get(user__slug=nonprofit)
       #  queryset = queryset.filter(nonprofit=nonprofit)

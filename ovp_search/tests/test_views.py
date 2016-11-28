@@ -6,7 +6,7 @@ from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
 from ovp_users.models import User
-from ovp_projects.models import Project
+from ovp_projects.models import Project, Job
 from ovp_organizations.models import Organization
 from ovp_core.models import GoogleAddress, Cause, Skill
 
@@ -31,6 +31,10 @@ def create_sample_projects():
   address3.save()
   address4.save()
 
+  # TODO: Implement when Organization has slug
+  #organization = Organization(name="test filter by org", slug="filter-by-org", details="abc", owner=user, address=address1, published=True, type=0)
+  #organization.save()
+
   project = Project(name="test project", slug="test-slug", details="abc", description="abc", owner=user, address=address1, published=True)
   project.save()
   project.causes.add(Cause.objects.all().order_by('pk')[0])
@@ -43,6 +47,8 @@ def create_sample_projects():
   project = Project(name="test project3", slug="test-slug3", details="abc", description="abc", owner=user, address=address3, published=True)
   project.save()
   project.skills.add(Skill.objects.all().order_by('pk')[1])
+  job = Job(can_be_done_remotely=True, project=project)
+  job.save()
 
   project = Project(name="test project4", slug="test-slug4", details="abc", description="abc", owner=user, address=address4, published=False)
   project.save()
@@ -110,6 +116,14 @@ class ProjectSearchTestCase(TestCase):
     response = self.client.get(reverse("search-projects-list"), format="json")
     self.assertTrue(len(response.data["results"]) == 3)
 
+  # TODO: Implement when Organization has slug
+  #def test_organization_filter(self):
+  #  """
+  #  Test searching with organization filter returns only projects from organization
+  #  """
+  #  response = self.client.get(reverse("search-projects-list") + "?organization=filter-by-org", format="json")
+  #  self.assertTrue(len(response.data["results"]) == 1)
+
   def test_highlighted_filter(self):
     """
     Test searching with highlighted=true returns only highlighted fields
@@ -132,6 +146,10 @@ class ProjectSearchTestCase(TestCase):
 
     # Filter by country
     response = self.client.get(reverse("search-projects-list") + '?address={"address_components":[{"types":["country"], "long_name":"United States"}]}', format="json")
+    self.assertTrue(len(response.data["results"]) == 1)
+
+    # Filter remote jobs
+    response = self.client.get(reverse("search-projects-list") + '?address={"address_components":[]}', format="json")
     self.assertTrue(len(response.data["results"]) == 1)
 
 

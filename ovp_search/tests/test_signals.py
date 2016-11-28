@@ -2,13 +2,53 @@ from django.test import TestCase
 from django.core.management import call_command
 
 from ovp_users.models import User
-from ovp_projects.models import Project
+from ovp_projects.models import Project, Job, Work
 from ovp_organizations.models import Organization
 from ovp_core.models import GoogleAddress, Cause, Skill
 from ovp_search.helpers import whoosh_raw
 
 from haystack.query import SearchQuerySet
 
+class DisponibilityTestCase(TestCase):
+  def setUp(self):
+    call_command('clear_index', '--noinput', verbosity=0)
+
+    self.user = User.objects.create_user(email="testmail@test.com", password="test_returned")
+    self.user.save()
+
+    self.address1 = GoogleAddress(typed_address="São paulo, SP - Brazil")
+    self.address1.save()
+
+    self.address2 = GoogleAddress(typed_address="São paulo, SP - Brazil")
+    self.address2.save()
+
+
+  def test_disponibility_save_and_deletion_updates_index(self):
+    """
+    Test creating and deleting Job or Work updates Project index
+    """
+    self.assertTrue(SearchQuerySet().models(Project).all().count() == 0)
+
+    project = Project(name="test project", slug="test-slug", details="abc", description="abc", owner=self.user, address=self.address1, published=True)
+    project.save()
+
+    project2 = Project(name="test project", slug="test-slug", details="abc", description="abc", owner=self.user, address=self.address2, published=True)
+    project2.save()
+
+    job = Job(can_be_done_remotely=True, project=project)
+    job.save()
+
+    work = Work(can_be_done_remotely=True, project=project2)
+    work.save()
+
+    self.assertTrue(SearchQuerySet().models(Project).all().count() == 2)
+    self.assertTrue(SearchQuerySet().models(Project).filter(can_be_done_remotely=True).count() == 2)
+
+    job.delete()
+    work.delete()
+
+    self.assertTrue(SearchQuerySet().models(Project).all().count() == 0)
+    self.assertTrue(SearchQuerySet().models(Project).filter(can_be_done_remotely=True).count() == 0)
 
 class AddressTestCase(TestCase):
   """
@@ -47,7 +87,7 @@ class AddressTestCase(TestCase):
     self.assertTrue(SearchQuerySet().models(Project).filter(address_components__exact=whoosh_raw("Campinas-locality")).count() == 1)
 
     project.address.delete()
-    self.assertTrue(SearchQuerySet().models(Project).all().count() == 1)
+    self.assertTrue(SearchQuerySet().models(Project).all().count() == 0)
     self.assertTrue(SearchQuerySet().models(Project).filter(address_components__exact=whoosh_raw("Campinas-locality")).count() == 0)
 
 
@@ -67,6 +107,10 @@ class AddressTestCase(TestCase):
 
     self.assertTrue(SearchQuerySet().models(Organization).all().count() == 1)
     self.assertTrue(SearchQuerySet().models(Organization).filter(address_components__exact=whoosh_raw("Campinas-locality")).count() == 1)
+
+    organization.address.delete()
+    self.assertTrue(SearchQuerySet().models(Organization).all().count() == 0)
+    self.assertTrue(SearchQuerySet().models(Organization).filter(address_components__exact=whoosh_raw("Campinas-locality")).count() == 0)
 
 
 class ProjectIndexTestCase(TestCase):
