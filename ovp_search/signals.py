@@ -32,7 +32,8 @@ class TiedModelRealtimeSignalProcessor(signals.BaseSignalProcessor):
     for item in self.m2m:
       models.signals.m2m_changed.connect(self.handle_m2m, sender=item)
 
-  def teardown(self):
+  # never really called
+  def teardown(self): # pragma: no cover
     for item in self.attach_to:
       models.signals.post_save.disconnect(getattr(self, item[1]), sender=item[0])
       models.signals.post_delete.disconnect(getattr(self, item[1]), sender=item[0])
@@ -46,7 +47,8 @@ class TiedModelRealtimeSignalProcessor(signals.BaseSignalProcessor):
     for obj in objects:
       self.handle_save(obj.__class__, obj)
 
-  def handle_address_delete(self, sender, instance, **kwargs):
+  # this function is never really called on sqlite dbs
+  def handle_address_delete(self, sender, instance, **kwargs): # pragma: no cover
     """ Custom handler for address delete """
     objects = self.find_associated_with_address(instance)
     for obj in objects:
