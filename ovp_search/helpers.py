@@ -10,4 +10,7 @@ def is_whoosh_backend():
 def whoosh_raw(t):
   if is_whoosh_backend():
     return Raw("(\"{}\")".format(t))
-  return t
+
+  # whoosh is used on development/testing
+  # therefore we don't cover the following line, as it's never called on a test environment
+  return t # pragma: no cover
