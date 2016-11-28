@@ -47,7 +47,8 @@ class OrganizationSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet)
               if not search_region:
                 type_string = u"{}-{}".format(component[u'long_name'], component_type).strip()
 
-                if component_type == u"colloquial_area":
+                if component_type == u"colloquial_area": # pragma: no cover
+                  raise Exception("to be implemented/tested")
                   search_region = type_string
 
                 if type_string not in types:
@@ -60,7 +61,7 @@ class OrganizationSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet)
 
           # User is filtering for Grande São Paulo
           # We have to hack our way around it
-          else:
+          else: # pragma: no cover
             raise Exception("to be implemented/tested")
             filters = GoogleRegion.objects.filter(region_name=search_region)
             keys = [f.filter_by for f in filters]
@@ -126,7 +127,7 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
                 if not search_region:
                   type_string = u"{}-{}".format(component[u'long_name'], component_type).strip()
 
-                  if component_type == u"colloquial_area":
+                  if component_type == u"colloquial_area": # pragma: no cover
                     search_region = type_string
 
                   if type_string not in types:
@@ -139,7 +140,7 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
 
             # User is filtering for Grande São Paulo
             # We have to hack our way around it
-            else:
+            else: # pragma: no cover
               raise Exception("to be implemented/tested")
               filters = GoogleRegion.objects.filter(region_name=search_region)
               keys = [f.filter_by for f in filters]
