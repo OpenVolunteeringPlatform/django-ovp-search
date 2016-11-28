@@ -92,6 +92,17 @@ class ProjectSearchTestCase(TestCase):
     with self.assertNumQueries(3):
       response = self.client.get(reverse("search-projects-list"), format="json")
 
+  def test_query_gets_cached(self):
+    """
+    Test project search gets cached
+    """
+    cache.clear()
+    response = self.client.get(reverse("search-projects-list"), format="json")
+
+    # Second request should not hit db
+    with self.assertNumQueries(0):
+      response = self.client.get(reverse("search-projects-list"), format="json")
+
   def test_no_filter(self):
     """
     Test searching with no filters return all available projects
@@ -186,6 +197,17 @@ class OrganizationSearchTestCase(TestCase):
     """
     cache.clear()
     with self.assertNumQueries(2):
+      response = self.client.get(reverse("search-organizations-list"), format="json")
+
+  def test_query_gets_cached(self):
+    """
+    Test organization search gets cached
+    """
+    cache.clear()
+    response = self.client.get(reverse("search-organizations-list"), format="json")
+
+    # Second request should not hit db
+    with self.assertNumQueries(0):
       response = self.client.get(reverse("search-organizations-list"), format="json")
 
   def test_no_filter(self):
