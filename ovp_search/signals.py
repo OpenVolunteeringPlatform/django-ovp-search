@@ -20,16 +20,25 @@ class TiedModelRealtimeSignalProcessor(signals.BaseSignalProcessor):
     (Organization, 'handle_save', 'handle_delete'),
     (GoogleAddress, 'handle_address_save', 'handle_address_delete'),
   ]
+  m2m = [
+    Project.causes.through, Project.skills.through, Organization.causes.through
+  ]
 
   def setup(self):
     for item in self.attach_to:
       models.signals.post_save.connect(getattr(self, item[1]), sender=item[0])
       models.signals.post_delete.connect(getattr(self, item[1]), sender=item[0])
 
+    for item in self.m2m:
+      models.signals.m2m_changed.connect(self.handle_m2m, sender=item)
+
   def teardown(self):
     for item in self.attach_to:
       models.signals.post_save.disconnect(getattr(self, item[1]), sender=item[0])
       models.signals.post_delete.disconnect(getattr(self, item[1]), sender=item[0])
+
+    for item in self.m2m:
+      models.signals.m2m_changed.disconnect(self.handle_m2m, sender=item)
 
   def handle_address_save(self, sender, instance, **kwargs):
     """ Custom handler for address save """
@@ -43,6 +52,10 @@ class TiedModelRealtimeSignalProcessor(signals.BaseSignalProcessor):
     objects = self.find_associates_with_address(instance)
     for obj in objects:
       self.handle_delete(obj.__class__, obj)
+
+  def handle_m2m(self, sender, instance, **kwargs):
+    """ Handle many to many relationships """
+    self.handle_save(instance.__class__, instance)
 
   def find_associated_with_address(self, instance):
     """ Returns list with projects and organizations associated with given address """
