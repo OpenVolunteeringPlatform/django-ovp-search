@@ -24,7 +24,12 @@ v0.1.3
 * Upgrade ovp-projects to 1.0.0
 * Fix license name on README
 
-v1.0.0[unreleased]
+v1.0.0
 -----------
-* TODO: Implement tests for projectlistview
-* TODO: Implement tests for max queries
+* Rename SearchResource to ProjectSearchResource
+* Implement NonprofitSearchResource
+* Implement TiedModelRealtimeSignalProcessor
+* Implement /country-cities/ route
+* Implement test suite
+* Optimize search queries
+* Release as stable
