@@ -1,6 +1,7 @@
 from haystack import indexes
 from ovp_projects.models import Project, Work, Job
 from ovp_organizations.models import Organization
+from ovp_core.models import GoogleAddress
 
 """
 Mixins(used by multiple indexes)
@@ -14,10 +15,14 @@ class CausesMixin:
 class AddressComponentsMixin:
   def prepare_address_components(self, obj):
     types = []
-    if obj.address:
-      for component in obj.address.address_components.all():
-        for component_type in component.types.all():
-          types.append(u'{}-{}'.format(component.long_name, component_type.name))
+
+    try:
+      if obj.address:
+        for component in obj.address.address_components.all():
+          for component_type in component.types.all():
+            types.append(u'{}-{}'.format(component.long_name, component_type.name))
+    except GoogleAddress.DoesNotExist:
+      pass
 
     return types
 

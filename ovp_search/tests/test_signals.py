@@ -46,6 +46,10 @@ class AddressTestCase(TestCase):
     self.assertTrue(SearchQuerySet().models(Project).all().count() == 1)
     self.assertTrue(SearchQuerySet().models(Project).filter(address_components__exact=whoosh_raw("Campinas-locality")).count() == 1)
 
+    project.address.delete()
+    self.assertTrue(SearchQuerySet().models(Project).all().count() == 1)
+    self.assertTrue(SearchQuerySet().models(Project).filter(address_components__exact=whoosh_raw("Campinas-locality")).count() == 0)
+
 
   def test_organization_index_on_address_update(self):
     """ Test organization index gets reindexed if address changes """

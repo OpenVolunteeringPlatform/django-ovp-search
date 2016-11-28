@@ -49,7 +49,6 @@ class TiedModelRealtimeSignalProcessor(signals.BaseSignalProcessor):
   def handle_address_delete(self, sender, instance, **kwargs):
     """ Custom handler for address delete """
     objects = self.find_associated_with_address(instance)
-    objects = self.find_associates_with_address(instance)
     for obj in objects:
       self.handle_delete(obj.__class__, obj)
 
