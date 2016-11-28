@@ -24,7 +24,7 @@ class OrganizationSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet)
   def get_queryset(self):
     params = self.request.GET
 
-    key = 'nonprofits-{}'.format(hash(frozenset(params.items())))
+    key = 'organizations-{}'.format(hash(frozenset(params.items())))
     cache_ttl = 120
     result = cache.get(key)
 
