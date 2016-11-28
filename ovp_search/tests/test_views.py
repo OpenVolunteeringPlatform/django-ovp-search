@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.core.management import call_command
+from django.core.cache import cache
 
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
@@ -10,6 +11,8 @@ from ovp_organizations.models import Organization
 from ovp_core.models import GoogleAddress, Cause, Skill
 
 import json
+
+
 
 """
 Helpers
@@ -80,6 +83,14 @@ class ProjectSearchTestCase(TestCase):
     call_command('clear_index', '--noinput', verbosity=0)
     create_sample_projects()
     self.client = APIClient()
+
+  def test_query_optimization(self):
+    """
+    Test project search does only 3 queries
+    """
+    cache.clear()
+    with self.assertNumQueries(3):
+      response = self.client.get(reverse("search-projects-list"), format="json")
 
   def test_no_filter(self):
     """
@@ -168,6 +179,14 @@ class OrganizationSearchTestCase(TestCase):
     call_command('clear_index', '--noinput', verbosity=0)
     create_sample_organizations()
     self.client = APIClient()
+
+  def test_query_optimization(self):
+    """
+    Test organization search does only 2 queries
+    """
+    cache.clear()
+    with self.assertNumQueries(2):
+      response = self.client.get(reverse("search-organizations-list"), format="json")
 
   def test_no_filter(self):
     """
