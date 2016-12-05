@@ -38,3 +38,7 @@ v1.0.1
 -----------
 * Add 'name' filter to Project and Organization search
 * Add 'published' filter to Project and Organization search
+
+v1.0.2
+-----------
+* Fix requirements
