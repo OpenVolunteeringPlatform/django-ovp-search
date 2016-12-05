@@ -28,6 +28,7 @@ class AddressComponentsMixin:
 Indexes
 """
 class ProjectIndex(indexes.SearchIndex, indexes.Indexable, CausesMixin, AddressComponentsMixin):
+  name = indexes.NgramField(model_attr='name')
   causes = indexes.MultiValueField(faceted=True)
   text = indexes.CharField(document=True, use_template=True)
   skills = indexes.MultiValueField(faceted=True)

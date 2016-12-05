@@ -33,3 +33,7 @@ v1.0.0
 * Implement test suite
 * Optimize search queries
 * Release as stable
+
+v1.0.1
+-----------
+* Add name filter to Project and Organization search

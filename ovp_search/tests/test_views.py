@@ -124,6 +124,13 @@ class ProjectSearchTestCase(TestCase):
   #  response = self.client.get(reverse("search-projects-list") + "?organization=filter-by-org", format="json")
   #  self.assertTrue(len(response.data["results"]) == 1)
 
+  def test_name_filter(self):
+    """
+    Test searching with name filter returns project filtered by name(ngram)
+    """
+    response = self.client.get(reverse("search-projects-list") + "?name=roject", format="json")
+    self.assertTrue(len(response.data["results"]) == 3)
+
   def test_highlighted_filter(self):
     """
     Test searching with highlighted=true returns only highlighted fields
@@ -233,6 +240,13 @@ class OrganizationSearchTestCase(TestCase):
     Test searching with no filters return all available projects
     """
     response = self.client.get(reverse("search-organizations-list"), format="json")
+    self.assertTrue(len(response.data["results"]) == 3)
+
+  def test_name_filter(self):
+    """
+    Test searching with name filter returns organizations filtered by name(ngram)
+    """
+    response = self.client.get(reverse("search-organizations-list") + "?name=rganizati", format="json")
     self.assertTrue(len(response.data["results"]) == 3)
 
   def test_highlighted_filter(self):

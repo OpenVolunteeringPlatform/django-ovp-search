@@ -33,8 +33,12 @@ class OrganizationSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet)
       query = params.get('query', None)
       cause = params.get('cause', None)
       address = params.get('address', None)
+      name = params.get('name', None)
 
       queryset = SearchQuerySet().models(Organization)
+
+      if name:
+        queryset.filter(name=name)
 
       if address:
         address = json.loads(address)
@@ -107,6 +111,7 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
       skill = params.get('skill', None)
       address = params.get('address', None)
       highlighted = (params.get('highlighted') == 'true')
+      name = params.get('name', None)
 
       queryset = SearchQuerySet().models(Project)
 
@@ -114,6 +119,9 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
       #if nonprofit:
       #  nonprofit = Nonprofit.objects.get(user__slug=nonprofit)
       #  queryset = queryset.filter(nonprofit=nonprofit)
+
+      if name:
+        queryset = queryset.filter(name=name)
 
       if address:
         address = json.loads(address)
