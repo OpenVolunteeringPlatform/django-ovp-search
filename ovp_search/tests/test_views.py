@@ -116,6 +116,20 @@ class ProjectSearchTestCase(TestCase):
     response = self.client.get(reverse("search-projects-list"), format="json")
     self.assertTrue(len(response.data["results"]) == 3)
 
+
+  def test_publish_filter(self):
+    """
+    Test searching with publish filter == "true", "false" and "both" return correct projects
+    """
+    response = self.client.get(reverse("search-projects-list") + "?published=true", format="json")
+    self.assertTrue(len(response.data["results"]) == 3)
+
+    response = self.client.get(reverse("search-projects-list") + "?published=false", format="json")
+    self.assertTrue(len(response.data["results"]) == 1)
+
+    response = self.client.get(reverse("search-projects-list") + "?published=both", format="json")
+    self.assertTrue(len(response.data["results"]) == 4)
+
   # TODO: Implement when Organization has slug
   #def test_organization_filter(self):
   #  """
@@ -241,6 +255,19 @@ class OrganizationSearchTestCase(TestCase):
     """
     response = self.client.get(reverse("search-organizations-list"), format="json")
     self.assertTrue(len(response.data["results"]) == 3)
+
+  def test_publish_filter(self):
+    """
+    Test searching with publish filter == "true", "false" and "both" return correct organizations
+    """
+    response = self.client.get(reverse("search-organizations-list") + "?published=true", format="json")
+    self.assertTrue(len(response.data["results"]) == 3)
+
+    response = self.client.get(reverse("search-organizations-list") + "?published=false", format="json")
+    self.assertTrue(len(response.data["results"]) == 1)
+
+    response = self.client.get(reverse("search-organizations-list") + "?published=both", format="json")
+    self.assertTrue(len(response.data["results"]) == 4)
 
   def test_name_filter(self):
     """

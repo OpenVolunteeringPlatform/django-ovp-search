@@ -36,4 +36,5 @@ v1.0.0
 
 v1.0.1
 -----------
-* Add name filter to Project and Organization search
+* Add 'name' filter to Project and Organization search
+* Add 'published' filter to Project and Organization search

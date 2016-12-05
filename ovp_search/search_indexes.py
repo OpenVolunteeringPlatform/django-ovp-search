@@ -66,7 +66,7 @@ class ProjectIndex(indexes.SearchIndex, indexes.Indexable, CausesMixin, AddressC
     return Project
 
   def index_queryset(self, using=None):
-    return self.get_model().objects.filter(closed=False, published=True, deleted=False)
+    return self.get_model().objects.filter(closed=False, deleted=False)
 
 
 
@@ -75,9 +75,10 @@ class OrganizationIndex(indexes.SearchIndex, indexes.Indexable, CausesMixin, Add
   text = indexes.CharField(document=True, use_template=True)
   highlighted = indexes.BooleanField(model_attr='highlighted')
   address_components = indexes.MultiValueField(faceted=True)
+  published = indexes.BooleanField(model_attr='published')
 
   def get_model(self):
     return Organization
 
   def index_queryset(self, using=None):
-    return self.get_model().objects.filter(deleted=False, published=True)
+    return self.get_model().objects.filter(deleted=False)
