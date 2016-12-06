@@ -46,3 +46,7 @@ v1.0.2
 v1.0.3
 -----------
 * Upgrade to django-ovp-core 1.0.11
+
+v1.0.4
+-----------
+* Fix problems with 'name' filter on OrganizationSearchViewSet
