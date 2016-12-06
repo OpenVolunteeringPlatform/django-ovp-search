@@ -3,12 +3,12 @@ from setuptools import setup, find_packages
 
 setup(
     name='ovp-search',
-    version='1.0.2',
+    version='1.0.3',
     author=u'Atados',
     author_email='arroyo@atados.com.br',
     packages=find_packages(),
     url='https://github.com/OpenVolunteeringPlatform/django-ovp-core',
-    download_url = 'https://github.com/OpenVolunteeringPlatform/django-ovp-core/tarball/1.0.2',
+    download_url = 'https://github.com/OpenVolunteeringPlatform/django-ovp-core/tarball/1.0.3',
     license='AGPL',
     description='This module has search functionality for' + \
                 ' ovp projects and nonprofits',
