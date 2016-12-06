@@ -71,6 +71,7 @@ class ProjectIndex(indexes.SearchIndex, indexes.Indexable, CausesMixin, AddressC
 
 
 class OrganizationIndex(indexes.SearchIndex, indexes.Indexable, CausesMixin, AddressComponentsMixin):
+  name = indexes.NgramField(model_attr='name')
   causes = indexes.MultiValueField(faceted=True)
   text = indexes.CharField(document=True, use_template=True)
   highlighted = indexes.BooleanField(model_attr='highlighted')
