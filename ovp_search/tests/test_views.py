@@ -142,8 +142,8 @@ class ProjectSearchTestCase(TestCase):
     """
     Test searching with name filter returns project filtered by name(ngram)
     """
-    response = self.client.get(reverse("search-projects-list") + "?name=roject", format="json")
-    self.assertTrue(len(response.data["results"]) == 3)
+    response = self.client.get(reverse("search-projects-list") + "?name=roject2", format="json")
+    self.assertTrue(len(response.data["results"]) == 1)
 
   def test_highlighted_filter(self):
     """
@@ -273,8 +273,8 @@ class OrganizationSearchTestCase(TestCase):
     """
     Test searching with name filter returns organizations filtered by name(ngram)
     """
-    response = self.client.get(reverse("search-organizations-list") + "?name=rganizati", format="json")
-    self.assertTrue(len(response.data["results"]) == 3)
+    response = self.client.get(reverse("search-organizations-list") + "?name=rganization2", format="json")
+    self.assertTrue(len(response.data["results"]) == 1)
 
   def test_highlighted_filter(self):
     """
