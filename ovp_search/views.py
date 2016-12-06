@@ -45,7 +45,7 @@ class OrganizationSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet)
       # Any other value will return both published and unpublished
 
       if name:
-        queryset.filter(name=name)
+        queryset = queryset.filter(name=name)
 
       if address:
         address = json.loads(address)
