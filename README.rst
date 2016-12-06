@@ -2,11 +2,11 @@
 OVP Search
 ==========
 
-.. image:: https://app.codeship.com/projects/58b28a40-7d1d-0134-1441-32b74bfe7659/status?branch=master
-.. image:: https://codecov.io/gh/OpenVolunteeringPlatform/django-ovp-search/branch/master/graph/badge.svg
+.. image:: https://img.shields.io/codeship/58b28a40-7d1d-0134-1441-32b74bfe7659/master.svg?style=flat-square
+.. image:: https://img.shields.io/codecov/c/github/OpenVolunteeringPlatform/django-ovp-search.svg?style=flat-square
   :target: https://codecov.io/gh/OpenVolunteeringPlatform/django-ovp-search
-.. image:: https://badge.fury.io/py/ovp-search.svg
-  :target: https://badge.fury.io/py/ovp-search
+.. image:: https://img.shields.io/pypi/v/ovp-search.svg
+  :target: https://pypi.python.org/pypi/ovp-search/
 
 This module implements core search functionality. It is responsible for searching projects and nonprofits.
 
