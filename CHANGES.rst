@@ -56,3 +56,4 @@ v1.0.5[unreleased]
 * Fix maps api language on tests(override settings.py definition)
 * Use both "locality" and "administrative_area_level_2" as city indicator
 * Test signals using "administrative_area_level_2" as filter instead of "locality"
+* Fix query optimization on ProjectSearchResource(missing owner on prefetch_related)
