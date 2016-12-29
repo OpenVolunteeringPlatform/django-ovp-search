@@ -50,3 +50,7 @@ v1.0.3
 v1.0.4
 -----------
 * Fix problems with 'name' filter on OrganizationSearchViewSet
+
+v1.0.5[unreleased]
+-----------
+* Fix maps api language on tests(override settings.py definition)

@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.test.utils import override_settings
 from django.core.management import call_command
 from django.core.cache import cache
 
@@ -332,6 +333,7 @@ class OrganizationSearchTestCase(TestCase):
     self.assertTrue(len(response.data["results"]) == 0)
 
 
+@override_settings(OVP_CORE={'MAPS_API_LANGUAGE': 'en_US'})
 class CityCountryTestCase(TestCase):
   def setUp(self):
     call_command('clear_index', '--noinput', verbosity=0)
@@ -351,5 +353,3 @@ class CityCountryTestCase(TestCase):
     self.assertTrue(response.status_code == 200)
     self.assertTrue(len(response.data) == 1)
     self.assertTrue("New York" in response.data)
-
-

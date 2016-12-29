@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.test.utils import override_settings
 from django.core.management import call_command
 
 from ovp_users.models import User
@@ -9,6 +10,7 @@ from ovp_search.helpers import whoosh_raw
 
 from haystack.query import SearchQuerySet
 
+@override_settings(OVP_CORE={'MAPS_API_LANGUAGE': 'en_US'})
 class DisponibilityTestCase(TestCase):
   def setUp(self):
     call_command('clear_index', '--noinput', verbosity=0)
@@ -50,6 +52,7 @@ class DisponibilityTestCase(TestCase):
     self.assertTrue(SearchQuerySet().models(Project).all().count() == 0)
     self.assertTrue(SearchQuerySet().models(Project).filter(can_be_done_remotely=True).count() == 0)
 
+@override_settings(OVP_CORE={'MAPS_API_LANGUAGE': 'en_US'})
 class AddressTestCase(TestCase):
   """
     RealTimeSignalProcessor handles updates to a index tied to a model
@@ -113,6 +116,7 @@ class AddressTestCase(TestCase):
     self.assertTrue(SearchQuerySet().models(Organization).filter(address_components__exact=whoosh_raw("Campinas-locality")).count() == 0)
 
 
+@override_settings(OVP_CORE={'MAPS_API_LANGUAGE': 'en_US'})
 class ProjectIndexTestCase(TestCase):
   def setUp(self):
     call_command('clear_index', '--noinput', verbosity=0)
@@ -168,6 +172,7 @@ class ProjectIndexTestCase(TestCase):
     self.assertTrue(SearchQuerySet().models(Project).filter(skills=skill.pk).count() == 1)
 
 
+@override_settings(OVP_CORE={'MAPS_API_LANGUAGE': 'en_US'})
 class OrganizationIndexTestCase(TestCase):
   def setUp(self):
     call_command('clear_index', '--noinput', verbosity=0)
