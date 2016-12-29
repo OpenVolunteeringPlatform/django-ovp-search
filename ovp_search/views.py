@@ -208,8 +208,8 @@ def query_country(request, country):
 
   for project in queryset:
     for comp in project.address_components:
-      if "-locality" in comp:
-        city_name = comp.replace("-locality", "")
+      if "-administrative_area_level_2" in comp or "-locality" in comp:
+        city_name = comp.replace("-administrative_area_level_2", "").replace("-locality", "")
         if city_name not in available_cities:
           available_cities.append(city_name)
 
