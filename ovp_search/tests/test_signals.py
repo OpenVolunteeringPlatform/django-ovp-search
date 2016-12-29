@@ -81,17 +81,17 @@ class AddressTestCase(TestCase):
     project.save()
 
     self.assertTrue(SearchQuerySet().models(Project).all().count() == 1)
-    self.assertTrue(SearchQuerySet().models(Project).filter(address_components__exact=whoosh_raw("São Paulo-locality")).count() == 1)
+    self.assertTrue(SearchQuerySet().models(Project).filter(address_components__exact=whoosh_raw("São Paulo-administrative_area_level_2")).count() == 1)
 
     project.address.typed_address = "Campinas, SP - Brazil"
     project.address.save()
 
     self.assertTrue(SearchQuerySet().models(Project).all().count() == 1)
-    self.assertTrue(SearchQuerySet().models(Project).filter(address_components__exact=whoosh_raw("Campinas-locality")).count() == 1)
+    self.assertTrue(SearchQuerySet().models(Project).filter(address_components__exact=whoosh_raw("Campinas-administrative_area_level_2")).count() == 1)
 
     project.address.delete()
     self.assertTrue(SearchQuerySet().models(Project).all().count() == 0)
-    self.assertTrue(SearchQuerySet().models(Project).filter(address_components__exact=whoosh_raw("Campinas-locality")).count() == 0)
+    self.assertTrue(SearchQuerySet().models(Project).filter(address_components__exact=whoosh_raw("Campinas-administrative_area_level_2")).count() == 0)
 
 
   def test_organization_index_on_address_update(self):
@@ -103,17 +103,17 @@ class AddressTestCase(TestCase):
     organization.save()
 
     self.assertTrue(SearchQuerySet().models(Organization).all().count() == 1)
-    self.assertTrue(SearchQuerySet().models(Organization).filter(address_components__exact=whoosh_raw("São Paulo-locality")).count() == 1)
+    self.assertTrue(SearchQuerySet().models(Organization).filter(address_components__exact=whoosh_raw("São Paulo-administrative_area_level_2")).count() == 1)
 
     organization.address.typed_address = "Campinas, SP - Brazil"
     organization.address.save()
 
     self.assertTrue(SearchQuerySet().models(Organization).all().count() == 1)
-    self.assertTrue(SearchQuerySet().models(Organization).filter(address_components__exact=whoosh_raw("Campinas-locality")).count() == 1)
+    self.assertTrue(SearchQuerySet().models(Organization).filter(address_components__exact=whoosh_raw("Campinas-administrative_area_level_2")).count() == 1)
 
     organization.address.delete()
     self.assertTrue(SearchQuerySet().models(Organization).all().count() == 0)
-    self.assertTrue(SearchQuerySet().models(Organization).filter(address_components__exact=whoosh_raw("Campinas-locality")).count() == 0)
+    self.assertTrue(SearchQuerySet().models(Organization).filter(address_components__exact=whoosh_raw("Campinas-administrative_area_level_2")).count() == 0)
 
 
 @override_settings(OVP_CORE={'MAPS_API_LANGUAGE': 'en_US'})
@@ -137,13 +137,13 @@ class ProjectIndexTestCase(TestCase):
     project.save()
 
     self.assertTrue(SearchQuerySet().models(Project).all().count() == 1)
-    self.assertTrue(SearchQuerySet().models(Project).filter(address_components__exact=whoosh_raw("São Paulo-locality")).count() == 1)
+    self.assertTrue(SearchQuerySet().models(Project).filter(address_components__exact=whoosh_raw("São Paulo-administrative_area_level_2")).count() == 1)
 
     project.address = self.address2
     project.save()
 
     self.assertTrue(SearchQuerySet().models(Project).all().count() == 1)
-    self.assertTrue(SearchQuerySet().models(Project).filter(address_components__exact=whoosh_raw("Campinas-locality")).count() == 1)
+    self.assertTrue(SearchQuerySet().models(Project).filter(address_components__exact=whoosh_raw("Campinas-administrative_area_level_2")).count() == 1)
 
 
   def test_index_on_causes_update(self):
@@ -193,13 +193,13 @@ class OrganizationIndexTestCase(TestCase):
     organization.save()
 
     self.assertTrue(SearchQuerySet().models(Organization).all().count() == 1)
-    self.assertTrue(SearchQuerySet().models(Organization).filter(address_components__exact=whoosh_raw("São Paulo-locality")).count() == 1)
+    self.assertTrue(SearchQuerySet().models(Organization).filter(address_components__exact=whoosh_raw("São Paulo-administrative_area_level_2")).count() == 1)
 
     organization.address = self.address2
     organization.save()
 
     self.assertTrue(SearchQuerySet().models(Organization).all().count() == 1)
-    self.assertTrue(SearchQuerySet().models(Organization).filter(address_components__exact=whoosh_raw("Campinas-locality")).count() == 1)
+    self.assertTrue(SearchQuerySet().models(Organization).filter(address_components__exact=whoosh_raw("Campinas-administrative_area_level_2")).count() == 1)
 
 
   def test_index_on_causes_update(self):
