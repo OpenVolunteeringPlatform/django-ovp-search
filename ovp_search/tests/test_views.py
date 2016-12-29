@@ -85,6 +85,7 @@ def create_sample_organizations():
 """
 Tests
 """
+@override_settings(OVP_CORE={'MAPS_API_LANGUAGE': 'en_US'})
 class ProjectSearchTestCase(TestCase):
   def setUp(self):
     call_command('clear_index', '--noinput', verbosity=0)
@@ -225,6 +226,7 @@ class ProjectSearchTestCase(TestCase):
     self.assertTrue(len(response.data["results"]) == 0)
 
 
+@override_settings(OVP_CORE={'MAPS_API_LANGUAGE': 'en_US'})
 class OrganizationSearchTestCase(TestCase):
   def setUp(self):
     call_command('clear_index', '--noinput', verbosity=0)

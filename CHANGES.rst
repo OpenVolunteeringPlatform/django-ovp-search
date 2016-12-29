@@ -51,9 +51,13 @@ v1.0.4
 -----------
 * Fix problems with 'name' filter on OrganizationSearchViewSet
 
-v1.0.5[unreleased]
+v1.0.5
 -----------
 * Fix maps api language on tests(override settings.py definition)
 * Use both "locality" and "administrative_area_level_2" as city indicator
 * Test signals using "administrative_area_level_2" as filter instead of "locality"
 * Fix query optimization on ProjectSearchResource(missing owner on prefetch_related)
+
+v1.0.6[unreleased]
+-----------
+* Fix maps api language on tests(not totally fixed by last release)
