@@ -21,10 +21,10 @@ setup(
       'coverage>=4.2,<4.3.0',
       'django-haystack>=2.5.0,<2.6.0',
       'ovp-projects>=1.0.0,<1.1.0',
-      'ovp-users>=1.0.0,<1.1.0',
-      'ovp-core>=1.0.0,<1.1.0',
-      'ovp-uploads>=1.0.0,<1.1.0',
-      'ovp-organizations>=0.1.2,<1.0.0',
+      'ovp-users>=1.0.0,<2.0.0',
+      'ovp-core>=1.1.0,<2.0.0',
+      'ovp-uploads>=1.0.0,<2.0.0',
+      'ovp-organizations>=1.0.0,<2.0.0',
       'whoosh>=2.7.4,<2.8.0',
     ]
 )
