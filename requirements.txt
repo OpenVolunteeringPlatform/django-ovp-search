@@ -6,6 +6,6 @@ ovp-core==1.2.1
 ovp-users==1.0.21
 ovp-uploads==1.0.2
 ovp-organizations==1.0.8
-ovp-projects==1.1.8
+ovp-projects==1.1.9
 django-haystack==2.6.0
 whoosh==2.7.4
