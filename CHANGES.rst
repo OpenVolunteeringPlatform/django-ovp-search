@@ -66,5 +66,9 @@ v1.0.7
 -----------
 * Upgrade dependencies
 
-v1.0.8[unreleased]
+v1.0.8
+-----------
+* Upgrade ovp-projects to 1.1.9
+
+v1.0.9[unreleased]
 -----------
