@@ -139,7 +139,6 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
 
       if address:
         address = json.loads(address)
-        address = address[0]
 
         if u'address_components' in address:
           types = []
