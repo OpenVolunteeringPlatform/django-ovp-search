@@ -214,6 +214,16 @@ class ProjectSearchTestCase(TestCase):
     self.assertTrue(len(response.data["results"]) == 2)
 
 
+  def test_highlighted_order_desc(self):
+    response = self.client.get(reverse("search-projects-list") + "?order_by=name&ordered=desc", format="json")
+    self.assertTrue(response.data["results"][0]["name"] == "test project3")
+
+
+  def test_highlighted_order_asc(self):
+    response = self.client.get(reverse("search-projects-list") + "?order_by=name&ordered=asc", format="json")
+    self.assertTrue(response.data["results"][0]["name"] == "test project")
+
+
   def test_query_filter(self):
     """
     Test searching with query filter returns only results filtered by text query

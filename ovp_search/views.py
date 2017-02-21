@@ -189,11 +189,19 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
           q_obj.add(SQ(causes=c), SQ.OR)
         queryset = queryset.filter(q_obj)
 
+      # Get order attributes
+      ordered = '' 
+      if 'ordered' in params:
+        if params['ordered'] == 'desc': 
+          ordered = '-'
+
+      order_by_field = params['order_by'] if 'order_by' in params else 'highlighted'
+
       # haystack SearchQuerySet has to be converted to a django QuerySet
       # to work properly with django-rest-framework
       # TODO: Find a solution
       result_keys = [q.pk for q in queryset]
-      result = Project.objects.filter(pk__in=result_keys, deleted=False, closed=False).prefetch_related('skills', 'causes').select_related('address', 'owner').order_by('-highlighted')
+      result = Project.objects.filter(pk__in=result_keys, deleted=False, closed=False).prefetch_related('skills', 'causes').select_related('address', 'owner').order_by(ordered + order_by_field)
       cache.set(key, result, cache_ttl)
 
     return result
