@@ -54,24 +54,18 @@ def by_address(queryset, address='', project=False):
 
     if u'address_components' in address:
       types = []
-      search_region = False
 
       if len(address[u'address_components']):
         for component in address[u'address_components']:
           for component_type in component[u'types']:
-            if not search_region:
-              type_string = u"{}-{}".format(component[u'long_name'], component_type).strip()
+            type_string = u"{}-{}".format(component[u'long_name'], component_type).strip()
 
-              if component_type == u"colloquial_area": # pragma: no cover
-                search_region = type_string
-
-              if type_string not in types:
-                types.append(type_string)
+            if type_string not in types:
+              types.append(type_string)
 
         # Filter all address components
-        if not search_region:
-          for address_type in types:
-            queryset = queryset.filter(address_components=helpers.whoosh_raw(address_type))
+        for address_type in types:
+          queryset = queryset.filter(address_components=helpers.whoosh_raw(address_type))
       else: # remote projects
         if project:
           queryset = queryset.filter(can_be_done_remotely=True)

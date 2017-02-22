@@ -7,6 +7,7 @@ from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
 from ovp_users.models import User
+from ovp_users.models.profile import get_profile_model
 from ovp_projects.models import Project, Job
 from ovp_organizations.models import Organization
 from ovp_core.models import GoogleAddress, Cause, Skill
@@ -31,10 +32,6 @@ def create_sample_projects():
   address2.save()
   address3.save()
   address4.save()
-
-  # TODO: Implement when Organization has slug
-  #organization = Organization(name="test filter by org", slug="filter-by-org", details="abc", owner=user, address=address1, published=True, type=0)
-  #organization.save()
 
   project = Project(name="test project", slug="test-slug", details="abc", description="abc", owner=user, address=address1, published=True)
   project.save()
@@ -80,6 +77,35 @@ def create_sample_organizations():
 
   organization = Organization(name="test organization4", details="abc", owner=user, address=address4, published=False, type=0)
   organization.save()
+
+
+def create_sample_users():
+  user1 = User.objects.create_user(email="testmail1@test.com", password="test_returned")
+  user1.save()
+
+  user2 = User.objects.create_user(email="testmail2@test.com", password="test_returned")
+  user2.save()
+
+  user3 = User.objects.create_user(email="testmail3@test.com", password="test_returned")
+  user3.save()
+
+  UserProfile = get_profile_model()
+  profile1 = UserProfile(user=user1, full_name="user one", about="about one")
+  profile1.save()
+  profile1.causes.add(Cause.objects.get(pk=1))
+  profile1.causes.add(Cause.objects.get(pk=2))
+  profile1.skills.add(Skill.objects.get(pk=1))
+  profile1.skills.add(Skill.objects.get(pk=2))
+
+  profile2 = UserProfile(user=user2, full_name="user two", about="about two")
+  profile2.save()
+  profile2.causes.add(Cause.objects.get(pk=1))
+  profile2.causes.add(Cause.objects.get(pk=3))
+  profile2.skills.add(Skill.objects.get(pk=1))
+  profile2.skills.add(Skill.objects.get(pk=3))
+
+  profile3 = UserProfile(user=user3, full_name="user three", about="about three")
+  profile3.save()
 
 
 """
@@ -131,14 +157,6 @@ class ProjectSearchTestCase(TestCase):
 
     response = self.client.get(reverse("search-projects-list") + "?published=both", format="json")
     self.assertTrue(len(response.data["results"]) == 4)
-
-  # TODO: Implement when Organization has slug
-  #def test_organization_filter(self):
-  #  """
-  #  Test searching with organization filter returns only projects from organization
-  #  """
-  #  response = self.client.get(reverse("search-projects-list") + "?organization=filter-by-org", format="json")
-  #  self.assertTrue(len(response.data["results"]) == 1)
 
   def test_name_filter(self):
     """
@@ -343,6 +361,52 @@ class OrganizationSearchTestCase(TestCase):
 
     response = self.client.get(reverse("search-organizations-list") + "?query=organization4", format="json")
     self.assertTrue(len(response.data["results"]) == 0)
+
+
+
+@override_settings(OVP_SEARCH={'ENABLE_USER_SEARCH': True})
+class UserSearchTestCase(TestCase):
+  def setUp(self):
+    call_command('clear_index', '--noinput', verbosity=0)
+    create_sample_users()
+    self.client = APIClient()
+
+
+  def test_no_filter(self):
+    """
+    Test searching with no filter returns all results
+    """
+    response = self.client.get(reverse("search-users-list"), format="json")
+    self.assertTrue(len(response.data["results"]) == 3)
+
+
+  def test_causes_filter(self):
+    """
+    Test searching with causes filter returns only results filtered by cause
+    """
+    response = self.client.get(reverse("search-users-list") + "?cause=1,2", format="json")
+    self.assertTrue(len(response.data["results"]) == 2)
+    self.assertTrue(response.data["results"][0]["profile"]["full_name"] == "user one")
+    self.assertTrue(response.data["results"][1]["profile"]["full_name"] == "user two")
+
+
+  def test_skills_filter(self):
+    """
+    Test searching with skills filter returns only results filtered by cause
+    """
+    response = self.client.get(reverse("search-users-list") + "?skill=1,2", format="json")
+    self.assertTrue(len(response.data["results"]) == 2)
+    self.assertTrue(response.data["results"][0]["profile"]["full_name"] == "user one")
+    self.assertTrue(response.data["results"][1]["profile"]["full_name"] == "user two")
+
+
+  @override_settings(OVP_SEARCH={'ENABLE_USER_SEARCH': False})
+  def test_user_search_must_be_enabled(self):
+    """
+    Test searching for users must be enabled in settings
+    """
+    response = self.client.get(reverse("search-users-list"), format="json")
+    self.assertTrue(response.status_code == 403)
 
 
 @override_settings(OVP_CORE={'MAPS_API_LANGUAGE': 'en_US'})

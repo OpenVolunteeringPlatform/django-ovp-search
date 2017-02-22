@@ -1,3 +1,5 @@
+from django.core.exceptions import PermissionDenied
+
 from ovp_projects.serializers.project import ProjectSearchSerializer
 from ovp_projects.models import Project
 
@@ -98,6 +100,39 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
 
       result_keys = [q.pk for q in queryset]
       result = Project.objects.filter(pk__in=result_keys, deleted=False, closed=False).prefetch_related('skills', 'causes').select_related('address', 'owner').order_by(ordered + order_by_field)
+      cache.set(key, result, cache_ttl)
+
+    return result
+
+
+class UserSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
+  serializer_class = get_user_search_serializer()
+
+  def __init__(self, *args, **kwargs):
+    self.check_user_search_enabled()
+    return super(UserSearchResource, self).__init__(*args, **kwargs)
+
+  def check_user_search_enabled(self):
+    s = helpers.get_settings()
+    if not s.get('ENABLE_USER_SEARCH', False):
+      raise PermissionDenied
+
+  def get_queryset(self):
+    params = self.request.GET
+    key = 'users-{}'.format(hash(frozenset(params.items())))
+    cache_ttl = 120
+    result = cache.get(key)
+
+    if not result:
+      cause = params.get('cause', None)
+      skill = params.get('skill', None)
+
+      queryset = SearchQuerySet().models(User)
+      queryset = filters.by_skills(queryset, skill)
+      queryset = filters.by_causes(queryset, cause)
+
+      result_keys = [q.pk for q in queryset]
+      result = User.objects.filter(pk__in=result_keys, profile__public=True).prefetch_related('profile__skills', 'profile__causes')
       cache.set(key, result, cache_ttl)
 
     return result

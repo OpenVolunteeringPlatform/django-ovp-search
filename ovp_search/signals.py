@@ -90,7 +90,7 @@ class TiedModelRealtimeSignalProcessor(signals.BaseSignalProcessor):
 
   def handle_profile_delete(self, sender, instance, **kwargs):
     """ Custom handler for user profile delete """
-    self.handle_delete(instance.user.__class__, instance.user)
+    self.handle_save(instance.user.__class__, instance.user) # we call save just as well
 
   def handle_m2m(self, sender, instance, **kwargs):
     """ Handle many to many relationships """

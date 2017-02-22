@@ -253,9 +253,11 @@ class UserIndexTestCase(TestCase):
 
     user = User.objects.create_user(email="testmail@test.com", password="test_returned")
     user.save()
+    profile = get_profile_model()(user=user)
+    profile.save()
 
     self.assertTrue(SearchQuerySet().models(User).all().count() == 1)
-
+    profile.delete()
+    self.assertTrue(SearchQuerySet().models(User).all().count() == 1)
     user.delete()
-
     self.assertTrue(SearchQuerySet().models(User).all().count() == 0)
