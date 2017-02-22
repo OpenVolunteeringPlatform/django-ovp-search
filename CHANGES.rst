@@ -79,6 +79,9 @@ v1.0.10
 * Implement User search
 * Implement order_by on Project search
 
-v1.0.11[unreleased]
+v1.0.11
 -----------
 * Fix ovp-core requirements
+
+v1.0.12[unreleased]
+-----------
