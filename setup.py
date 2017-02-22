@@ -20,11 +20,11 @@ setup(
       'codecov>=2.0.5,<2.1.0',
       'coverage>=4.2,<4.4.0',
       'django-haystack>=2.5.0,<2.7.0',
-      'ovp-projects>=1.0.0,<1.1.0',
+      'ovp-projects>=1.2.7,<1.1.0',
       'ovp-users>=1.1.3,<2.0.0',
       'ovp-core>=1.2.4,<2.0.0',
       'ovp-uploads>=1.0.0,<2.0.0',
-      'ovp-organizations>=1.0.0,<2.0.0',
+      'ovp-organizations>=1.0.11,<2.0.0',
       'whoosh>=2.7.4,<2.8.0',
     ]
 )
