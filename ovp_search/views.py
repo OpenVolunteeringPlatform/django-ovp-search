@@ -65,9 +65,6 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
   def get_queryset(self):
     params = self.request.GET
 
-    # TODO: Implement when Organization has slug
-    #nonprofit = params.get('nonprofit', None)
-
     key = 'projects-{}'.format(hash(frozenset(params.items())))
     cache_ttl = 120
     result = cache.get(key)

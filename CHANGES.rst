@@ -70,5 +70,14 @@ v1.0.8
 -----------
 * Upgrade ovp-projects to 1.1.9
 
-v1.0.9[unreleased]
+v1.0.9
+-----------
+Skipped
+
+v1.0.10
+-----------
+* Implement User search
+* Implement order_by on Project search
+
+v1.0.11[unreleased]
 -----------
