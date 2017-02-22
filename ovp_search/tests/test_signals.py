@@ -3,6 +3,7 @@ from django.test.utils import override_settings
 from django.core.management import call_command
 
 from ovp_users.models import User
+from ovp_users.models.profile import get_profile_model
 from ovp_projects.models import Project, Job, Work
 from ovp_organizations.models import Organization
 from ovp_core.models import GoogleAddress, Cause, Skill
@@ -186,7 +187,7 @@ class OrganizationIndexTestCase(TestCase):
     self.address2.save()
 
   def test_index_on_create_and_update(self):
-    """ Test organization index gets updated when a project is created or updated """
+    """ Test organization index gets updated when a organization is created or updated """
     self.assertTrue(SearchQuerySet().models(Project).all().count() == 0)
 
     organization = Organization(name="test organization", details="abc", owner=self.user, address=self.address1, published=True, type=0)
@@ -204,7 +205,7 @@ class OrganizationIndexTestCase(TestCase):
 
   def test_index_on_causes_update(self):
     """ Test organization index gets updated when a cause is modified """
-    cause = Cause.objects.all().order_by('pk')[0]
+    cause = Cause.objects.all().order_by('pk').first()
     organization = Organization(name="test organization", details="abc", owner=self.user, address=self.address1, published=True, type=0)
     organization.save()
 
@@ -213,3 +214,48 @@ class OrganizationIndexTestCase(TestCase):
     organization.causes.add(cause)
 
     self.assertTrue(SearchQuerySet().models(Organization).filter(causes=cause.pk).count() == 1)
+
+
+class UserIndexTestCase(TestCase):
+  def setUp(self):
+    call_command('clear_index', '--noinput', verbosity=0)
+
+
+  def test_index_on_create_and_update(self):
+    """ Test user index gets updated when a project is created or updated """
+    cause = Cause.objects.all().order_by('pk').first()
+    skill = Skill.objects.all().order_by('pk').first()
+
+    self.assertTrue(SearchQuerySet().models(User).all().count() == 0)
+
+    user = User.objects.create_user(email="testmail@test.com", password="test_returned")
+    user.save()
+    profile = get_profile_model()(user=user)
+    profile.save()
+
+    self.assertTrue(SearchQuerySet().models(User).filter(skills=skill.pk).count() == 0)
+    profile.skills.add(skill)
+    self.assertTrue(SearchQuerySet().models(User).filter(skills=skill.pk).count() == 1)
+
+    self.assertTrue(SearchQuerySet().models(User).filter(causes=cause.pk).count() == 0)
+    profile.causes.add(cause)
+    self.assertTrue(SearchQuerySet().models(User).filter(causes=cause.pk).count() == 1)
+
+    profile.skills.clear()
+    profile.causes.clear()
+    self.assertTrue(SearchQuerySet().models(User).filter(skills=skill.pk).count() == 0)
+    self.assertTrue(SearchQuerySet().models(User).filter(causes=cause.pk).count() == 0)
+
+
+  def test_index_on_delete(self):
+    """ Test user index gets updated when a project is created or updated """
+    self.assertTrue(SearchQuerySet().models(User).all().count() == 0)
+
+    user = User.objects.create_user(email="testmail@test.com", password="test_returned")
+    user.save()
+
+    self.assertTrue(SearchQuerySet().models(User).all().count() == 1)
+
+    user.delete()
+
+    self.assertTrue(SearchQuerySet().models(User).all().count() == 0)

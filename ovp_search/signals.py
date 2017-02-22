@@ -4,6 +4,8 @@ from haystack import signals
 from ovp_projects.models import Project, Job, Work
 from ovp_organizations.models import Organization
 from ovp_core.models import GoogleAddress
+from ovp_users.models import User
+from ovp_users.models.profile import get_profile_model
 
 
 class TiedModelRealtimeSignalProcessor(signals.BaseSignalProcessor):
@@ -18,12 +20,21 @@ class TiedModelRealtimeSignalProcessor(signals.BaseSignalProcessor):
   attach_to = [
     (Project, 'handle_save', 'handle_delete'),
     (Organization, 'handle_save', 'handle_delete'),
+    (User, 'handle_save', 'handle_delete'),
+    (get_profile_model(), 'handle_profile_save', 'handle_profile_delete'),
     (GoogleAddress, 'handle_address_save', 'handle_address_delete'),
     (Job, 'handle_job_and_work_save', 'handle_job_and_work_delete'),
     (Work, 'handle_job_and_work_save', 'handle_job_and_work_delete'),
   ]
   m2m = [
-    Project.causes.through, Project.skills.through, Organization.causes.through
+    Project.causes.through,
+    Project.skills.through,
+    Organization.causes.through
+  ]
+
+  m2m_user = [
+    get_profile_model().causes.through,
+    get_profile_model().skills.through
   ]
 
   def setup(self):
@@ -34,6 +45,9 @@ class TiedModelRealtimeSignalProcessor(signals.BaseSignalProcessor):
     for item in self.m2m:
       models.signals.m2m_changed.connect(self.handle_m2m, sender=item)
 
+    for item in self.m2m_user:
+      models.signals.m2m_changed.connect(self.handle_m2m_user, sender=item)
+
   # never really called
   def teardown(self): # pragma: no cover
     for item in self.attach_to:
@@ -42,6 +56,9 @@ class TiedModelRealtimeSignalProcessor(signals.BaseSignalProcessor):
 
     for item in self.m2m:
       models.signals.m2m_changed.disconnect(self.handle_m2m, sender=item)
+
+    for item in self.m2m_user:
+      models.signals.m2m_changed.disconnect(self.handle_m2m_user, sender=item)
 
   def handle_address_save(self, sender, instance, **kwargs):
     """ Custom handler for address save """
@@ -67,9 +84,21 @@ class TiedModelRealtimeSignalProcessor(signals.BaseSignalProcessor):
     """ Custom handler for job and work delete """
     self.handle_delete(instance.project.__class__, instance.project)
 
+  def handle_profile_save(self, sender, instance, **kwargs):
+    """ Custom handler for user profile save """
+    self.handle_save(instance.user.__class__, instance.user)
+
+  def handle_profile_delete(self, sender, instance, **kwargs):
+    """ Custom handler for user profile delete """
+    self.handle_delete(instance.user.__class__, instance.user)
+
   def handle_m2m(self, sender, instance, **kwargs):
     """ Handle many to many relationships """
     self.handle_save(instance.__class__, instance)
+
+  def handle_m2m_user(self, sender, instance, **kwargs):
+    """ Handle many to many relationships for user field """
+    self.handle_save(instance.user.__class__, instance.user)
 
   def find_associated_with_address(self, instance):
     """ Returns list with projects and organizations associated with given address """

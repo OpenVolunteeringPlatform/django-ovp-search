@@ -1,7 +1,10 @@
 from haystack import indexes
+from django.db.models import Q
 from ovp_projects.models import Project, Work, Job
 from ovp_organizations.models import Organization
 from ovp_core.models import GoogleAddress
+from ovp_users.models import User
+from ovp_users.models.profile import get_profile_model
 
 """
 Mixins(used by multiple indexes)
@@ -10,6 +13,10 @@ Mixins(used by multiple indexes)
 class CausesMixin:
   def prepare_causes(self, obj):
     return [cause.id for cause in obj.causes.all()]
+
+class SkillsMixin:
+  def prepare_skills(self, obj):
+    return [skill.id for skill in obj.skills.all()]
 
 
 class AddressComponentsMixin:
@@ -27,7 +34,7 @@ class AddressComponentsMixin:
 """
 Indexes
 """
-class ProjectIndex(indexes.SearchIndex, indexes.Indexable, CausesMixin, AddressComponentsMixin):
+class ProjectIndex(indexes.SearchIndex, indexes.Indexable, SkillsMixin, CausesMixin, AddressComponentsMixin):
   name = indexes.NgramField(model_attr='name')
   causes = indexes.MultiValueField(faceted=True)
   text = indexes.CharField(document=True, use_template=True)
@@ -38,9 +45,6 @@ class ProjectIndex(indexes.SearchIndex, indexes.Indexable, CausesMixin, AddressC
   deleted = indexes.BooleanField(model_attr='deleted')
   closed = indexes.BooleanField(model_attr='closed')
   address_components = indexes.MultiValueField(faceted=True)
-
-  def prepare_skills(self, obj):
-    return [skill.id for skill in obj.skills.all()]
 
   def prepare_can_be_done_remotely(self, obj):
     can_be_done_remotely = False
@@ -83,3 +87,27 @@ class OrganizationIndex(indexes.SearchIndex, indexes.Indexable, CausesMixin, Add
 
   def index_queryset(self, using=None):
     return self.get_model().objects.filter(deleted=False)
+
+
+class UserIndex(indexes.SearchIndex, indexes.Indexable, AddressComponentsMixin):
+  text = indexes.CharField(document=True)
+  causes = indexes.MultiValueField(faceted=True)
+  skills = indexes.MultiValueField(faceted=True)
+
+  def get_model(self):
+    return User
+
+  def index_queryset(self, using=None):
+    return self.get_model().objects.filter(Q(profile__public=True) | Q(profile=None))
+
+  def prepare_causes(self, obj):
+    try:
+      return [cause.id for cause in obj.profile.causes.all()]
+    except get_profile_model().DoesNotExist:
+      return []
+
+  def prepare_skills(self, obj):
+    try:
+      return [skill.id for skill in obj.profile.skills.all()]
+    except get_profile_model().DoesNotExist:
+      return []
