@@ -18,7 +18,6 @@ from rest_framework import viewsets
 from rest_framework import mixins
 from rest_framework import response
 from rest_framework import decorators
-from rest_framework import status
 
 from haystack.query import SearchQuerySet, SQ
 
@@ -42,49 +41,6 @@ class OrganizationSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet)
       published = params.get('published', 'true')
 
       queryset = SearchQuerySet().models(Organization)
-
-      if published == "true":
-        queryset = queryset.filter(published=True)
-      elif published == "false":
-        queryset = queryset.filter(published=False)
-      # Any other value will return both published and unpublished
-
-      if name:
-        queryset = queryset.filter(name=name)
-
-      if address:
-        address = json.loads(address)
-        types = []
-        search_region = False
-
-        if u'address_components' in address:
-          for component in address[u'address_components']:
-            for component_type in component[u'types']:
-              if not search_region:
-                type_string = u"{}-{}".format(component[u'long_name'], component_type).strip()
-
-                if component_type == u"colloquial_area": # pragma: no cover
-                  raise NotImplementedError("to be implemented/tested")
-                  search_region = type_string
-
-                if type_string not in types:
-                  types.append(type_string)
-
-          # Filter all address components
-          if not search_region:
-            for address_type in types:
-              queryset = queryset.filter(address_components=helpers.whoosh_raw(address_type))
-
-          # User is filtering for Grande São Paulo
-          # We have to hack our way around it
-          else: # pragma: no cover
-            raise NotImplementedError("to be implemented/tested")
-            filters = GoogleRegion.objects.filter(region_name=search_region)
-            keys = [f.filter_by for f in filters]
-            queryset = queryset.filter(address_components__in=keys)
-
-
->>>>>>> prevent internal errors on bad 'address' parameter
       queryset = queryset.filter(highlighted=True) if highlighted else queryset
       queryset = queryset.filter(content=query) if query else queryset
       queryset = filters.by_published(queryset, published)
@@ -137,36 +93,6 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
         if params['ordered'] == 'desc':
           ordered = '-'
 
-      if published == "true":
-        queryset = queryset.filter(published=True)
-      elif published == "false":
-        queryset = queryset.filter(published=False)
-      # Any other value will return both published and unpublished
-
-      # TODO: Implement when Organization has slug
-      #if nonprofit:
-      #  nonprofit = Nonprofit.objects.get(user__slug=nonprofit)
-      #  queryset = queryset.filter(nonprofit=nonprofit)
-
-      if name:
-        queryset = queryset.filter(name=name)
-
-      if address:
-        try:
-          address = json.loads(address)
-        except json.JSONDecodeError as err:
-          return response.Response({'message': err.args[0]}, status=status.HTTP_400_BAD_REQUEST)
-
-        if u'address_components' in address:
-          types = []
-          search_region = False
-
-          if len(address[u'address_components']): #filtrar endereço
-            for component in address[u'address_components']:
-              for component_type in component[u'types']:
-                if not search_region:
-                  type_string = u"{}-{}".format(component[u'long_name'], component_type).strip()
-
       order_by_field = params['order_by'] if 'order_by' in params else 'highlighted'
 
       result_keys = [q.pk for q in queryset]
@@ -175,18 +101,6 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
 
     return result
 
-<<<<<<< HEAD
-=======
-            # User is filtering for Grande São Paulo
-            # We have to hack our way around it
-            else: # pragma: no cover
-              raise NotImplementedError("to be implemented/tested")
-              filters = GoogleRegion.objects.filter(region_name=search_region)
-              keys = [f.filter_by for f in filters]
-              queryset = queryset.filter(address_components__in=keys)
-          else: # remotos
-            queryset = queryset.filter(can_be_done_remotely=True)
->>>>>>> prevent internal errors on bad 'address' parameter
 
 class UserSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
   serializer_class = get_user_search_serializer()
