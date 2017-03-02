@@ -102,12 +102,14 @@ class UserIndex(indexes.SearchIndex, indexes.Indexable, AddressComponentsMixin):
 
   def prepare_causes(self, obj):
     try:
-      return [cause.id for cause in obj.profile.causes.all()]
+      if obj.profile:
+        return [cause.id for cause in obj.profile.causes.all()]
     except get_profile_model().DoesNotExist:
       return []
 
   def prepare_skills(self, obj):
     try:
-      return [skill.id for skill in obj.profile.skills.all()]
+      if obj.profile:
+        return [skill.id for skill in obj.profile.skills.all()]
     except get_profile_model().DoesNotExist:
       return []
