@@ -98,7 +98,8 @@ class UserIndex(indexes.SearchIndex, indexes.Indexable, AddressComponentsMixin):
     return User
 
   def index_queryset(self, using=None):
-    return self.get_model().objects.filter(Q(profile__public=True) | Q(profile=None))
+    # TODO: review profile implementation
+    return self.get_model().objects#.filter(Q(profile__public=True) | Q(profile=None))
 
   def prepare_causes(self, obj):
     try:
