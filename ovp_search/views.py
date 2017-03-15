@@ -205,9 +205,12 @@ def search_projects(request):
   #return response.Response(json_serializer.serialize(results))
   #return response.Response(results)
   #return HttpResponse(json_serializer.serialize(results), content_type="application/json")
-  return HttpResponse(json_serializer.serialize({
-    "count": len(results),
-    "results": results,
+
+  json_result = """{
+    "count": {},
+    "results": {},
     "next": None,
     "previous": None,
-  }), content_type="application/json")
+  }""".format(len(results), json_serializer.serialize(results))
+
+  return HttpResponse(json_result, content_type="application/json")
