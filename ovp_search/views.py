@@ -190,6 +190,7 @@ def get_projects_from_brazil(params):
   return result
 
 
+from django.http import HttpResponse
 @decorators.api_view(["GET"])
 def search_projects(request):
   #params = {'address': '{"address_components": [{"long_name": "Brazil", "types": ["country"]}]}'}
@@ -199,4 +200,5 @@ def search_projects(request):
   json_serializer = JSONSerializer()
 
   #return response.Response(json_serializer.serialize(result))
-  return response.Response(result)
+  #return response.Response(result)
+  return HttpResponse(json_serializer.serialize(result), content_type="application/json")
