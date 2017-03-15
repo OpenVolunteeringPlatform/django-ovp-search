@@ -152,3 +152,50 @@ def query_country(request, country):
   available_cities.sort()
 
   return response.Response(available_cities)
+
+
+from django.core import serializers
+
+def filter_queryset(params):
+  query = params.get('query', None)
+  cause = params.get('cause', None)
+  skill = params.get('skill', None)
+  address = params.get('address', None)
+  highlighted = (params.get('highlighted') == 'true')
+  name = params.get('name', None)
+  published = params.get('published', 'true')
+  #
+  queryset = SearchQuerySet().models(Project)
+  queryset = queryset.filter(highlighted=True) if highlighted else queryset
+  queryset = queryset.filter(content=query) if query else queryset
+  queryset = filters.by_published(queryset, published)
+  queryset = filters.by_address(queryset, address, project=True)
+  queryset = filters.by_name(queryset, name)
+  queryset = filters.by_skills(queryset, skill)
+  queryset = filters.by_causes(queryset, cause)
+  #
+  return queryset
+
+def get_projects_from_brazil(params):
+  # Get order attributes
+  ordered = ''
+  if 'ordered' in params:
+    if params['ordered'] == 'desc':
+      ordered = '-'
+  order_by_field = params['order_by'] if 'order_by' in params else 'highlighted'
+  queryset = filter_queryset(params)
+  result_keys = [q.pk for q in queryset]
+  result = Project.objects.filter(pk__in=result_keys, deleted=False, closed=False).prefetch_related('skills', 'causes').select_related('address', 'owner').order_by(ordered + order_by_field)
+  #
+  return result
+
+
+@decorators.api_view(["GET"])
+def search_projects(request):
+  #params = {'address': '{"address_components": [{"long_name": "Brazil", "types": ["country"]}]}'}
+  result = get_projects_from_brazil(request.GET)
+
+  JSONSerializer = serializers.get_serializer("json")
+  json_serializer = JSONSerializer()
+
+  return response.Response(json_serializer.serialize(result))
