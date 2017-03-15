@@ -213,4 +213,4 @@ def search_projects(request):
     "previous": None,
   }}""".format(len(results), json_serializer.serialize())
 
-  return HttpResponse(, content_type="application/json")
+  return HttpResponse(json_result, content_type="application/json")
