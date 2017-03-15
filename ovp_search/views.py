@@ -198,4 +198,5 @@ def search_projects(request):
   JSONSerializer = serializers.get_serializer("json")
   json_serializer = JSONSerializer()
 
-  return response.Response(json_serializer.serialize(result))
+  #return response.Response(json_serializer.serialize(result))
+  return response.Response(result)
