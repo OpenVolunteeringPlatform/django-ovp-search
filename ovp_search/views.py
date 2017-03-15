@@ -191,14 +191,23 @@ def get_projects_from_brazil(params):
 
 
 from django.http import HttpResponse
+from django.urls import reverse
+
+
 @decorators.api_view(["GET"])
 def search_projects(request):
   #params = {'address': '{"address_components": [{"long_name": "Brazil", "types": ["country"]}]}'}
-  result = get_projects_from_brazil(request.GET)
+  results = get_projects_from_brazil(request.GET)
 
   JSONSerializer = serializers.get_serializer("json")
   json_serializer = JSONSerializer()
 
-  #return response.Response(json_serializer.serialize(result))
-  #return response.Response(result)
-  return HttpResponse(json_serializer.serialize(result), content_type="application/json")
+  #return response.Response(json_serializer.serialize(results))
+  #return response.Response(results)
+  #return HttpResponse(json_serializer.serialize(results), content_type="application/json")
+  return HttpResponse(json_serializer.serialize({
+    "count": len(results),
+    "results": results,
+    "next": None,
+    "previous": None,
+  }), content_type="application/json")
