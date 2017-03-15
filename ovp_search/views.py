@@ -211,6 +211,6 @@ def search_projects(request):
     "results": {},
     "next": None,
     "previous": None,
-  }}""".format(len(results), json_serializer.serialize())
+  }}""".format(len(results), json_serializer.serialize(results))
 
   return HttpResponse(json_result, content_type="application/json")
