@@ -8,6 +8,7 @@ from ovp_organizations.serializers import OrganizationSearchSerializer
 
 from ovp_users.models.user import User
 from ovp_users.serializers.user import get_user_search_serializer
+from ovp_users.models.profile import get_profile_model, UserProfile
 
 from ovp_search import helpers
 from ovp_search import filters
@@ -20,6 +21,8 @@ from rest_framework import response
 from rest_framework import decorators
 
 from haystack.query import SearchQuerySet, SQ
+
+
 
 
 class OrganizationSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
@@ -129,7 +132,17 @@ class UserSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
       queryset = filters.by_causes(queryset, cause)
 
       result_keys = [q.pk for q in queryset]
-      result = User.objects.filter(pk__in=result_keys, profile__public=True).prefetch_related('profile__skills', 'profile__causes')
+      result = User.objects.filter(pk__in=result_keys)
+
+      if get_profile_model() == UserProfile:
+        related_field_name = UserProfile._meta.fields[1].related_query_name()
+        profile__public = related_field_name + '__public'
+
+        result = result.filter(**{profile__public: True})
+        result = result.prefetch_related(
+          related_field_name + '__skills', related_field_name + '__causes'
+        )
+
       cache.set(key, result, cache_ttl)
 
     return result
