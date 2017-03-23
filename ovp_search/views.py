@@ -140,8 +140,7 @@ class UserSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
 
         result = result.filter(**{profile__public: True})
 
-        result = result.prefetch_related('__skills', '__causes')
-        result = result.prefetch_related('related_field_name', 'related_field_name')
+        result = result.prefetch_related(related_field_name + '__skills', related_field_name + '__causes')
 
       cache.set(key, result, cache_ttl)
 
