@@ -82,6 +82,8 @@ class OrganizationIndex(indexes.SearchIndex, indexes.Indexable, CausesMixin, Add
   address_components = indexes.MultiValueField(faceted=True)
   published = indexes.BooleanField(model_attr='published')
 
+  name_autocomplete = indexes.NgramField(model_attr='name')
+
   def get_model(self):
     return Organization
 

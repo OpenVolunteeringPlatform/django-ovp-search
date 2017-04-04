@@ -23,8 +23,6 @@ from rest_framework import decorators
 from haystack.query import SearchQuerySet, SQ
 
 
-
-
 class OrganizationSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
   serializer_class = OrganizationSearchSerializer
 
@@ -33,20 +31,21 @@ class OrganizationSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet)
 
     key = 'organizations-{}'.format(hash(frozenset(params.items())))
     cache_ttl = 120
-    result = None#cache.get(key)
+    result = cache.get(key)
 
     if not result:
       highlighted = params.get('highlighted') == 'true'
+      published = params.get('published', 'true') == 'true'
+
       query = params.get('query', None)
       cause = params.get('cause', None)
       address = params.get('address', None)
       name = params.get('name', None)
-      published = params.get('published', 'true') == 'true'
 
       queryset = SearchQuerySet().models(Organization)
       queryset = queryset.filter(highlighted=True) if highlighted else queryset
       queryset = queryset.filter(content=query) if query else queryset
-      queryset = filters.by_name(queryset, name) if name else queryset
+      queryset = filters.by_name_autocomplete(queryset, name) if name else queryset
       queryset = filters.by_published(queryset, published)
       queryset = filters.by_address(queryset, address) if address else queryset
       queryset = filters.by_causes(queryset, cause) if cause else queryset
@@ -56,7 +55,7 @@ class OrganizationSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet)
       # TODO: Find a solution
       result_keys = [q.pk for q in queryset]
       result = Organization.objects.filter(pk__in=result_keys, deleted=False).prefetch_related('causes').select_related('address').order_by('-highlighted')
-#      cache.set(key, result, cache_ttl)
+      cache.set(key, result, cache_ttl)
 
     return result
 

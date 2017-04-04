@@ -36,10 +36,16 @@ def by_published(queryset, published_string='true'):
   return queryset
 
 
-def by_name(queryset, name='true'):
-  """ Filter queryset by publish status """
+def by_name(queryset, name=None):
+  """ Filter queryset by name, with word wide auto-completion """
   if name:
     queryset = queryset.filter(name=name)
+  return queryset
+
+def by_name_autocomplete(queryset, name=None):
+  """ Filter queryset by name, using char wide auto-completion """
+  if name:
+    queryset = queryset.autocomplete(name_autocomplete=name)
   return queryset
 
 
