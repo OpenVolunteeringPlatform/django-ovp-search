@@ -35,7 +35,7 @@ class OrganizationSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet)
 
     if not result:
       highlighted = params.get('highlighted') == 'true'
-      published = params.get('published', 'true') == 'true'
+      published = params.get('published', 'true')
 
       query = params.get('query', None)
       cause = params.get('cause', None)
