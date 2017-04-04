@@ -33,31 +33,30 @@ class OrganizationSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet)
 
     key = 'organizations-{}'.format(hash(frozenset(params.items())))
     cache_ttl = 120
-    result = cache.get(key)
+    result = None#cache.get(key)
 
     if not result:
       highlighted = params.get('highlighted') == 'true'
       query = params.get('query', None)
-      cause = params.get('cause', '')
+      cause = params.get('cause', None)
       address = params.get('address', None)
       name = params.get('name', None)
-      published = params.get('published', 'true')
+      published = params.get('published', 'true') == 'true'
 
       queryset = SearchQuerySet().models(Organization)
       queryset = queryset.filter(highlighted=True) if highlighted else queryset
       queryset = queryset.filter(content=query) if query else queryset
+      queryset = filters.by_name(queryset, name) if name else queryset
       queryset = filters.by_published(queryset, published)
-      queryset = filters.by_address(queryset, address)
-      queryset = filters.by_name(queryset, name)
-      queryset = filters.by_causes(queryset, cause)
-
+      queryset = filters.by_address(queryset, address) if address else queryset
+      queryset = filters.by_causes(queryset, cause) if cause else queryset
 
       # haystack SearchQuerySet has to be converted to a django QuerySet
       # to work properly with django-rest-framework
       # TODO: Find a solution
       result_keys = [q.pk for q in queryset]
       result = Organization.objects.filter(pk__in=result_keys, deleted=False).prefetch_related('causes').select_related('address').order_by('-highlighted')
-      cache.set(key, result, cache_ttl)
+#      cache.set(key, result, cache_ttl)
 
     return result
 
