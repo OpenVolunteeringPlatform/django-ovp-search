@@ -375,6 +375,15 @@ class UserSearchTestCase(TestCase):
     self.client = APIClient()
 
 
+  #def test_query_optimization(self):
+  #  """
+  #  Test user search does only 2 queries
+  #  """
+  #  cache.clear()
+  #  with self.assertNumQueries(2):
+  #    response = self.client.get(reverse("search-users-list"), format="json")
+
+
   def test_no_filter(self):
     """
     Test searching with no filter returns all results
