@@ -83,5 +83,9 @@ v1.0.11
 -----------
 * Fix ovp-core requirements
 
-v1.0.12[unreleased]
+v1.0.12
+-----------
+* Add user search
+
+v1.0.13[unreleased]
 -----------
