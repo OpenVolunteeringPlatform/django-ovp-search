@@ -130,14 +130,10 @@ class UserSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
       queryset = filters.by_causes(queryset, cause)
 
       result_keys = [q.pk for q in queryset]
-      result = User.objects.filter(pk__in=result_keys)
+      result = User.objects.filter(pk__in=result_keys, public=True)
 
       if get_profile_model() == UserProfile:
-        related_field_name = UserProfile._meta.fields[1].related_query_name()
-        profile__public = related_field_name + '__public'
-
-        result = result.filter(**{profile__public: True})
-
+        related_field_name = get_profile_model()._meta.fields[1].related_query_name()
         result = result.prefetch_related(related_field_name + '__skills', related_field_name + '__causes')
 
       cache.set(key, result, cache_ttl)

@@ -89,6 +89,9 @@ def create_sample_users():
   user3 = User.objects.create_user(email="testmail3@test.com", password="test_returned")
   user3.save()
 
+  user3 = User.objects.create_user(email="testmail4@test.com", password="test_returned", public=False)
+  user3.save()
+
   UserProfile = get_profile_model()
   profile1 = UserProfile(user=user1, full_name="user one", about="about one")
   profile1.save()
