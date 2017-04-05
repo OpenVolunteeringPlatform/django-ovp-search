@@ -87,5 +87,9 @@ v1.0.12
 -----------
 * Add user search
 
-v1.0.13[unreleased]
+v1.0.13
+-----------
+* Upgrade ovp-users and ovp-projects requirements
+
+v1.0.14[unreleased]
 -----------
