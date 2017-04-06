@@ -50,9 +50,6 @@ class OrganizationSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet)
       queryset = filters.by_address(queryset, address) if address else queryset
       queryset = filters.by_causes(queryset, cause) if cause else queryset
 
-      # haystack SearchQuerySet has to be converted to a django QuerySet
-      # to work properly with django-rest-framework
-      # TODO: Find a solution
       result_keys = [q.pk for q in queryset]
       result = Organization.objects.filter(pk__in=result_keys, deleted=False).prefetch_related('causes').select_related('address').order_by('-highlighted')
       cache.set(key, result, cache_ttl)
