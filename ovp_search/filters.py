@@ -1,6 +1,10 @@
+from rest_framework.filters import OrderingFilter
 from ovp_search import helpers
 from haystack.query import SQ
 import json
+
+class SearchOrderingFilter(OrderingFilter):
+  pass
 
 def by_skills(queryset, skill_string=''):
   """ Filter queryset by a comma delimeted skill list """

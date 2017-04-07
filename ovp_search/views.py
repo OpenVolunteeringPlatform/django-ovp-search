@@ -19,12 +19,14 @@ from rest_framework import viewsets
 from rest_framework import mixins
 from rest_framework import response
 from rest_framework import decorators
+from rest_framework import filters
 
 from haystack.query import SearchQuerySet, SQ
 
 
 class OrganizationSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
   serializer_class = OrganizationSearchSerializer
+  filter_backends = (filters.OrderingFilter,)
 
   def get_queryset(self):
     params = self.request.GET
@@ -59,6 +61,7 @@ class OrganizationSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet)
 
 class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
   serializer_class = ProjectSearchSerializer
+  filter_backends = (filters.OrderingFilter,)
 
   def get_queryset(self):
     params = self.request.GET
@@ -85,16 +88,8 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
       queryset = filters.by_skills(queryset, skill)
       queryset = filters.by_causes(queryset, cause)
 
-      # Get order attributes
-      ordered = ''
-      if 'ordered' in params:
-        if params['ordered'] == 'desc':
-          ordered = '-'
-
-      order_by_field = params['order_by'] if 'order_by' in params else 'highlighted'
-
       result_keys = [q.pk for q in queryset]
-      result = Project.objects.filter(pk__in=result_keys, deleted=False, closed=False).prefetch_related('skills', 'causes').select_related('address', 'owner').order_by(ordered + order_by_field)
+      result = Project.objects.filter(pk__in=result_keys, deleted=False, closed=False).prefetch_related('skills', 'causes').select_related('address', 'owner')
       cache.set(key, result, cache_ttl)
 
     return result
@@ -102,6 +97,7 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
 
 class UserSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
   serializer_class = get_user_search_serializer()
+  filter_backends = (filters.OrderingFilter,)
 
   def __init__(self, *args, **kwargs):
     self.check_user_search_enabled()
