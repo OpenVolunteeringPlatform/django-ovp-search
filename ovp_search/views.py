@@ -27,6 +27,7 @@ from haystack.query import SearchQuerySet, SQ
 class OrganizationSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
   serializer_class = OrganizationSearchSerializer
   filter_backends = (filters.OrderingFilter,)
+  ordering_fields = ('slug', 'name', 'website', 'facebook_page', 'details', 'description', 'type', 'hidden_address')
 
   def get_queryset(self):
     params = self.request.GET
@@ -62,6 +63,7 @@ class OrganizationSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet)
 class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
   serializer_class = ProjectSearchSerializer
   filter_backends = (filters.OrderingFilter,)
+  ordering_fields = ('name', 'slug', 'details', 'description', 'highlighted', 'published_date', 'created_date', 'max_applies', 'minimum_age', 'hidden_address', 'crowdfunding', 'public_project')
 
   def get_queryset(self):
     params = self.request.GET
@@ -98,6 +100,7 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
 class UserSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
   serializer_class = get_user_search_serializer()
   filter_backends = (filters.OrderingFilter,)
+  ordering_fields = ('slug', 'name')
 
   def __init__(self, *args, **kwargs):
     self.check_user_search_enabled()

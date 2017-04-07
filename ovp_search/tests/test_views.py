@@ -21,7 +21,7 @@ Helpers
 """
 def create_sample_projects():
   # Create sample projects
-  user = User.objects.create_user(email="testmail@test.com", password="test_returned")
+  user = User(email="testmail-proj@test.com", password="test_returned", name="a")
   user.save()
 
   address1 = GoogleAddress(typed_address="São paulo, SP - Brazil")
@@ -52,7 +52,7 @@ def create_sample_projects():
   project.save()
 
 def create_sample_organizations():
-  user = User.objects.create_user(email="testmail@test.com", password="test_returned")
+  user = User(email="testmail-org@test.com", password="test_returned", name="z")
   user.save()
 
   address1 = GoogleAddress(typed_address="São paulo, SP - Brazil")
@@ -80,16 +80,16 @@ def create_sample_organizations():
 
 
 def create_sample_users():
-  user1 = User.objects.create_user(email="testmail1@test.com", password="test_returned")
+  user1 = User(name="user1", email="testmail1@test.com", password="test_returned")
   user1.save()
 
-  user2 = User.objects.create_user(email="testmail2@test.com", password="test_returned")
+  user2 = User(name="user2", email="testmail2@test.com", password="test_returned")
   user2.save()
 
-  user3 = User.objects.create_user(email="testmail3@test.com", password="test_returned")
+  user3 = User(name="user3", email="testmail3@test.com", password="test_returned")
   user3.save()
 
-  user3 = User.objects.create_user(email="testmail4@test.com", password="test_returned", public=False)
+  user3 = User(name="user4", email="testmail4@test.com", password="test_returned", public=False)
   user3.save()
 
   UserProfile = get_profile_model()
@@ -233,16 +233,6 @@ class ProjectSearchTestCase(TestCase):
 
     response = self.client.get(reverse("search-projects-list") + "?skill={},{}".format(skill_id1, skill_id2), format="json")
     self.assertEqual(len(response.data["results"]), 2)
-
-
-  def test_highlighted_order_desc(self):
-    response = self.client.get(reverse("search-projects-list") + "?order_by=name&ordered=desc", format="json")
-    self.assertEqual(str(response.data["results"][0]["name"]), "test project3")
-
-
-  def test_highlighted_order_asc(self):
-    response = self.client.get(reverse("search-projects-list") + "?order_by=name&ordered=asc", format="json")
-    self.assertEqual(str(response.data["results"][0]["name"]), "test project")
 
 
   def test_query_filter(self):
@@ -419,6 +409,39 @@ class UserSearchTestCase(TestCase):
     """
     response = self.client.get(reverse("search-users-list"), format="json")
     self.assertEqual(response.status_code, 403)
+
+
+@override_settings(OVP_CORE={'MAPS_API_LANGUAGE': 'en_US'}, OVP_SEARCH={'ENABLE_USER_SEARCH': True})
+class OrderingTestCase(TestCase):
+  def setUp(self):
+    call_command('clear_index', '--noinput', verbosity=0)
+    create_sample_projects()
+    create_sample_organizations()
+    self.client = APIClient()
+
+
+  def test_ordering_descending(self):
+    """ Assert it's possible to order projects, users and organizations by fields ascending """
+    response = self.client.get(reverse("search-projects-list") + "?ordering=-name", format="json")
+    self.assertEqual(str(response.data["results"][0]["name"]), "test project3")
+
+    response = self.client.get(reverse("search-organizations-list") + "?ordering=-name", format="json")
+    self.assertEqual(str(response.data["results"][0]["name"]), "test organization3")
+
+    response = self.client.get(reverse("search-users-list") + "?ordering=-name", format="json")
+    self.assertEqual(str(response.data["results"][0]["name"]), "z")
+
+
+  def test_ordering_ascending(self):
+    """ Assert it's possible to order projects, users and organizations by fields descending """
+    response = self.client.get(reverse("search-projects-list") + "?ordering=name", format="json")
+    self.assertEqual(str(response.data["results"][0]["name"]), "test project")
+
+    response = self.client.get(reverse("search-organizations-list") + "?ordering=name", format="json")
+    self.assertEqual(str(response.data["results"][0]["name"]), "test organization")
+
+    response = self.client.get(reverse("search-users-list") + "?ordering=name", format="json")
+    self.assertEqual(str(response.data["results"][0]["name"]), "a")
 
 
 @override_settings(OVP_CORE={'MAPS_API_LANGUAGE': 'en_US'})
