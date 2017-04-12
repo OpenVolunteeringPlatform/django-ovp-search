@@ -21,7 +21,7 @@ Helpers
 """
 def create_sample_projects():
   # Create sample projects
-  user = User.objects.create_user(email="testmail-projects@test.com", password="test_returned")
+  user = User(name="a", email="testmail-projects@test.com", password="test_returned")
   user.save()
 
   address1 = GoogleAddress(typed_address="São paulo, SP - Brazil")
@@ -54,7 +54,7 @@ def create_sample_projects():
   project.save()
 
 def create_sample_organizations():
-  user = User.objects.create_user(email="testmail-organizations@test.com", password="test_returned")
+  user = User(name="z", email="testmail-organizations@test.com", password="test_returned")
   user.save()
 
   address1 = GoogleAddress(typed_address="São paulo, SP - Brazil")
@@ -91,8 +91,8 @@ def create_sample_users():
   user3 = User(name="user3", email="testmail3@test.com", password="test_returned")
   user3.save()
 
-  user3 = User(name="user4", email="testmail4@test.com", password="test_returned", public=False)
-  user3.save()
+  user4 = User(name="user4", email="testmail4@test.com", password="test_returned", public=False)
+  user4.save()
 
   UserProfile = get_profile_model()
   profile1 = UserProfile(user=user1, full_name="user one", about="about one")
@@ -449,7 +449,7 @@ class OrderingTestCase(TestCase):
   def test_ordering_by_relevance(self):
     """ Assert it's possible to order projects by relevance """
     UserProfile = get_profile_model()
-    user = User(email="testproject@relevance.com", password="testpassword")
+    user = User(name="b", email="testproject@relevance.com", password="testpassword")
     user.save()
 
     self.client.force_authenticate(user=user)

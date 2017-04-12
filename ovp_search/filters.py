@@ -48,8 +48,9 @@ class ProjectRelevanceOrderingFilter(OrderingFilter):
   def filter_queryset(self, request, queryset, view):
     ordering = self.get_ordering(request, queryset, view)
 
-    if "relevance" in ordering or "-relevance" in ordering:
-      queryset = self.annotate_queryset(queryset, request)
+    if ordering:
+      if "relevance" in ordering or "-relevance" in ordering:
+        queryset = self.annotate_queryset(queryset, request)
 
     if ordering:
       return queryset.order_by(*ordering)
