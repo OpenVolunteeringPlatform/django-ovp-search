@@ -25,6 +25,7 @@ setup(
       'ovp-core>=1.2.4,<2.0.0',
       'ovp-uploads>=1.0.0,<2.0.0',
       'ovp-organizations>=1.2.9,<2.0.0',
+      'djangorestframework-jwt>=1.9.0,<2.0.0',
       'whoosh>=2.7.4,<2.8.0',
     ]
 )

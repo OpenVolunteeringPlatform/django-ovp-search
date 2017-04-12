@@ -19,7 +19,6 @@ from rest_framework import viewsets
 from rest_framework import mixins
 from rest_framework import response
 from rest_framework import decorators
-from rest_framework.filters import OrderingFilter
 
 from haystack.query import SearchQuerySet, SQ
 
@@ -62,8 +61,8 @@ class OrganizationSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet)
 
 class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
   serializer_class = ProjectSearchSerializer
-  filter_backends = (filters.OrderingFilter,)
-  ordering_fields = ('name', 'slug', 'details', 'description', 'highlighted', 'published_date', 'created_date', 'max_applies', 'minimum_age', 'hidden_address', 'crowdfunding', 'public_project')
+  filter_backends = (filters.ProjectRelevanceOrderingFilter,)
+  ordering_fields = ('name', 'slug', 'details', 'description', 'highlighted', 'published_date', 'created_date', 'max_applies', 'minimum_age', 'hidden_address', 'crowdfunding', 'public_project', 'relevance')
 
   def get_queryset(self):
     params = self.request.GET

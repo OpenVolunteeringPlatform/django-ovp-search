@@ -46,9 +46,9 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 20,
     'PAGINATE_BY_PARAM': 'page_size',
     'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
     )
 }
 

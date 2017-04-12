@@ -21,7 +21,7 @@ Helpers
 """
 def create_sample_projects():
   # Create sample projects
-  user = User(email="testmail-proj@test.com", password="test_returned", name="a")
+  user = User.objects.create_user(email="testmail-projects@test.com", password="test_returned")
   user.save()
 
   address1 = GoogleAddress(typed_address="São paulo, SP - Brazil")
@@ -35,16 +35,18 @@ def create_sample_projects():
 
   project = Project(name="test project", slug="test-slug", details="abc", description="abc", owner=user, address=address1, published=True)
   project.save()
-  project.causes.add(Cause.objects.all().order_by('pk')[0])
-  project.skills.add(Skill.objects.all().order_by('pk')[0])
+  project.causes.add(Cause.objects.get(pk=1))
+  project.skills.add(Skill.objects.get(pk=1))
+  project.skills.add(Skill.objects.get(pk=4))
 
   project = Project(name="test project2", slug="test-slug2", details="abc", description="abc", owner=user, address=address2, highlighted=True, published=True)
   project.save()
-  project.causes.add(Cause.objects.all().order_by('pk')[1])
+  project.causes.add(Cause.objects.get(pk=2))
 
   project = Project(name="test project3", slug="test-slug3", details="abc", description="abc", owner=user, address=address3, published=True)
   project.save()
-  project.skills.add(Skill.objects.all().order_by('pk')[1])
+  project.skills.add(Skill.objects.get(pk=2))
+  project.causes.add(Cause.objects.get(pk=3))
   job = Job(can_be_done_remotely=True, project=project)
   job.save()
 
@@ -52,7 +54,7 @@ def create_sample_projects():
   project.save()
 
 def create_sample_organizations():
-  user = User(email="testmail-org@test.com", password="test_returned", name="z")
+  user = User.objects.create_user(email="testmail-organizations@test.com", password="test_returned")
   user.save()
 
   address1 = GoogleAddress(typed_address="São paulo, SP - Brazil")
@@ -442,6 +444,35 @@ class OrderingTestCase(TestCase):
 
     response = self.client.get(reverse("search-users-list") + "?ordering=name", format="json")
     self.assertEqual(str(response.data["results"][0]["name"]), "a")
+
+
+  def test_ordering_by_relevance(self):
+    """ Assert it's possible to order projects by relevance """
+    UserProfile = get_profile_model()
+    user = User(email="testproject@relevance.com", password="testpassword")
+    user.save()
+
+    self.client.force_authenticate(user=user)
+    response = self.client.get(reverse("search-projects-list") + "?ordering=-relevance,-created_date", format="json")
+    self.assertEqual(response.status_code, 200)
+
+    profile = UserProfile(user=user)
+    profile.save()
+    profile.causes.add(Cause.objects.get(pk=1))
+    profile.skills.add(Skill.objects.get(pk=1))
+    profile.skills.add(Skill.objects.get(pk=2))
+    profile.causes.add(Cause.objects.get(pk=3))
+
+    response = self.client.get(reverse("search-projects-list") + "?ordering=-relevance,-created_date", format="json")
+    self.assertEqual(str(response.data["results"][0]["name"]), "test project3")
+    self.assertEqual(str(response.data["results"][1]["name"]), "test project")
+    self.assertEqual(str(response.data["results"][2]["name"]), "test project2")
+
+  def test_ordering_by_relevance_unauthenticated(self):
+    """ Assert it's not possible to order projects by relevance while unauthenticated """
+    response = self.client.get(reverse("search-projects-list") + "?ordering=-relevance", format="json")
+    self.assertEqual(response.status_code, 401)
+
 
 
 @override_settings(OVP_CORE={'MAPS_API_LANGUAGE': 'en_US'})
