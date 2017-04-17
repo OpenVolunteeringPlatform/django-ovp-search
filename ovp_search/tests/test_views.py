@@ -149,6 +149,14 @@ class ProjectSearchTestCase(TestCase):
     response = self.client.get(reverse("search-projects-list"), format="json")
     self.assertEqual(len(response.data["results"]), 3)
 
+  @override_settings(OVP_CORE={'MAPS_API_LANGUAGE': 'en_US'}, OVP_SEARCH={'PROJECTS': {'FILTER_OUT': {'name': 'test project'}}})
+  def test_result_hiding(self):
+    """
+    Test it's possible to hide results through settings
+    """
+    cache.clear()
+    response = self.client.get(reverse("search-projects-list"), format="json")
+    self.assertEqual(len(response.data["results"]), 2)
 
   def test_publish_filter(self):
     """
@@ -198,7 +206,6 @@ class ProjectSearchTestCase(TestCase):
     response = self.client.get(reverse("search-projects-list") + '?address={"address_components":[]}', format="json")
     self.assertEqual(len(response.data["results"]), 1)
 
-
   def test_causes_filter(self):
     """
     Test searching with causes filter returns only results filtered by cause
@@ -217,7 +224,6 @@ class ProjectSearchTestCase(TestCase):
     response = self.client.get(reverse("search-projects-list") + "?cause={},{}".format(cause_id1, cause_id2), format="json")
     self.assertEqual(len(response.data["results"]), 2)
 
-
   def test_skills_filter(self):
     """
     Test searching with skill filter returns only results filtered by skill
@@ -235,7 +241,6 @@ class ProjectSearchTestCase(TestCase):
 
     response = self.client.get(reverse("search-projects-list") + "?skill={},{}".format(skill_id1, skill_id2), format="json")
     self.assertEqual(len(response.data["results"]), 2)
-
 
   def test_query_filter(self):
     """
@@ -277,10 +282,19 @@ class OrganizationSearchTestCase(TestCase):
 
   def test_no_filter(self):
     """
-    Test searching with no filters return all available projects
+    Test searching with no filters return all available organizations
     """
     response = self.client.get(reverse("search-organizations-list"), format="json")
     self.assertEqual(len(response.data["results"]), 3)
+
+  @override_settings(OVP_SEARCH={'ORGANIZATIONS': {'FILTER_OUT': {'name': 'test organization'}}})
+  def test_result_hiding(self):
+    """
+    Test it's possible to hide results through settings
+    """
+    cache.clear()
+    response = self.client.get(reverse("search-organizations-list"), format="json")
+    self.assertEqual(len(response.data["results"]), 2)
 
   def test_publish_filter(self):
     """
@@ -326,7 +340,6 @@ class OrganizationSearchTestCase(TestCase):
     response = self.client.get(reverse("search-organizations-list") + '?address={"address_components":[{"types":["country"], "long_name":"United States"}]}', format="json")
     self.assertEqual(len(response.data["results"]), 1)
 
-
   def test_causes_filter(self):
     """
     Test searching with causes filter returns only results filtered by cause
@@ -344,7 +357,6 @@ class OrganizationSearchTestCase(TestCase):
 
     response = self.client.get(reverse("search-organizations-list") + "?cause={},{}".format(cause_id1, cause_id2), format="json")
     self.assertEqual(len(response.data["results"]), 2)
-
 
   def test_query_filter(self):
     """

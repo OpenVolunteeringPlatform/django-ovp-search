@@ -54,6 +54,7 @@ class OrganizationSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet)
 
       result_keys = [q.pk for q in queryset]
       result = Organization.objects.filter(pk__in=result_keys, deleted=False).prefetch_related('causes').select_related('address').order_by('-highlighted')
+      result = filters.filter_out(result, "ORGANIZATIONS")
       cache.set(key, result, cache_ttl)
 
     return result
@@ -91,6 +92,7 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
 
       result_keys = [q.pk for q in queryset]
       result = Project.objects.filter(pk__in=result_keys, deleted=False, closed=False).prefetch_related('skills', 'causes').select_related('address', 'owner')
+      result = filters.filter_out(result, "PROJECTS")
       cache.set(key, result, cache_ttl)
 
     return result

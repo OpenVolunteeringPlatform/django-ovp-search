@@ -136,3 +136,11 @@ def by_address(queryset, address='', project=False):
         if project:
           queryset = queryset.filter(can_be_done_remotely=True)
   return queryset
+
+def filter_out(queryset, setting_name):
+  """
+  Remove unwanted results from queryset
+  """
+  kwargs = helpers.get_settings().get(setting_name, {}).get('FILTER_OUT', {})
+  queryset = queryset.exclude(**kwargs)
+  return queryset
