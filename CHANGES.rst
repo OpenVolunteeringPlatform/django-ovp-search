@@ -96,3 +96,4 @@ v1.0.14[unreleased]
 * Remove 'ordered' param in favor of OrderingFilter
 * Implement project ordering by 'relevance'
 * Add result exclusion through settings
+* Add AND operator to skills and causes filter

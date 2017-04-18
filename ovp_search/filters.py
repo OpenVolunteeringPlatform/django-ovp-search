@@ -62,14 +62,27 @@ class ProjectRelevanceOrderingFilter(OrderingFilter):
 ## Haystack filters ##
 ######################
 
+def get_operator_and_items(string=''):
+  items = string.split(',')
+
+  if items[0] == "AND" or items[0] == "OR":
+    first = items.pop(0)
+
+    if first == "AND":
+      return SQ.AND, items
+    if first == "OR":
+      return SQ.OR, items
+
+  return SQ.OR, items
+
 def by_skills(queryset, skill_string=''):
   """ Filter queryset by a comma delimeted skill list """
   if skill_string:
-    skills = skill_string.split(',')
+    operator, items = get_operator_and_items(skill_string)
     q_obj = SQ()
-    for s in skills:
+    for s in items:
       if len(s) > 0:
-        q_obj.add(SQ(skills=s), SQ.OR)
+        q_obj.add(SQ(skills=s), operator)
     queryset = queryset.filter(q_obj)
   return queryset
 
@@ -77,11 +90,11 @@ def by_skills(queryset, skill_string=''):
 def by_causes(queryset, cause_string=''):
   """ Filter queryset by a comma delimeted cause list """
   if cause_string:
-    causes = cause_string.split(',')
+    operator, items = get_operator_and_items(cause_string)
     q_obj = SQ()
-    for c in causes:
+    for c in items:
       if len(c) > 0:
-        q_obj.add(SQ(causes=c), SQ.OR)
+        q_obj.add(SQ(causes=c), operator)
     queryset = queryset.filter(q_obj)
   return queryset
 
