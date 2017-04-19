@@ -129,8 +129,7 @@ class UserSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
       result_keys = [q.pk for q in queryset]
       related_field_name = get_profile_model()._meta.get_field('user').related_query_name()
 
-      result = User.objects.filter(pk__in=result_keys, public=True)
-      #result = result.select_related(related_field_name).prefetch_related(related_field_name + '__skills', related_field_name + '__causes')
+      result = User.objects.filter(pk__in=result_keys, public=True).prefetch_related(related_field_name + '__skills', related_field_name + '__causes').select_related(related_field_name)
       cache.set(key, result, cache_ttl)
 
     return result

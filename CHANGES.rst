@@ -97,3 +97,4 @@ v1.0.14[unreleased]
 * Implement project ordering by 'relevance'
 * Add result exclusion through settings
 * Add AND operator to skills and causes filter
+* Optimize UserSearch query

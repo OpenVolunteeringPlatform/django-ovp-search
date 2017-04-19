@@ -94,6 +94,9 @@ def create_sample_users():
   user4 = User(name="user4", email="testmail4@test.com", password="test_returned", public=False)
   user4.save()
 
+  user5 = User(name="user5", email="testmail5@test.com", password="test_returned")
+  user5.save()
+
   UserProfile = get_profile_model()
   profile1 = UserProfile(user=user1, full_name="user one", about="about one")
   profile1.save()
@@ -111,6 +114,9 @@ def create_sample_users():
 
   profile3 = UserProfile(user=user3, full_name="user three", about="about three")
   profile3.save()
+
+  profile5 = UserProfile(user=user5, full_name="user five", about="about five")
+  profile5.save()
 
 
 """
@@ -147,7 +153,7 @@ class ProjectSearchTestCase(TestCase):
     Test searching with no filters return all available projects
     """
     response = self.client.get(reverse("search-projects-list"), format="json")
-    self.assertEqual(len(response.data["results"]), 3)
+    self.assertEqual(len(response.data["results"]), 4)
 
   @override_settings(OVP_CORE={'MAPS_API_LANGUAGE': 'en_US'}, OVP_SEARCH={'PROJECTS': {'FILTER_OUT': {'name': 'test project'}}})
   def test_result_hiding(self):
@@ -378,15 +384,13 @@ class UserSearchTestCase(TestCase):
     create_sample_users()
     self.client = APIClient()
 
-
-  #def test_query_optimization(self):
-  #  """
-  #  Test user search does only 2 queries
-  #  """
-  #  cache.clear()
-  #  with self.assertNumQueries(2):
-  #    response = self.client.get(reverse("search-users-list"), format="json")
-
+  def test_query_optimization(self):
+    """
+    Test user search does only 2 queries
+    """
+    cache.clear()
+    with self.assertNumQueries(3):
+      response = self.client.get(reverse("search-users-list"), format="json")
 
   def test_no_filter(self):
     """
@@ -394,7 +398,6 @@ class UserSearchTestCase(TestCase):
     """
     response = self.client.get(reverse("search-users-list"), format="json")
     self.assertEqual(len(response.data["results"]), 3)
-
 
   def test_causes_filter(self):
     """
@@ -423,7 +426,6 @@ class UserSearchTestCase(TestCase):
     self.assertEqual(len(response.data["results"]), 2)
     self.assertEqual(str(response.data["results"][0]["profile"]["full_name"]), "user one")
     self.assertEqual(str(response.data["results"][1]["profile"]["full_name"]), "user two")
-
 
   @override_settings(OVP_SEARCH={'ENABLE_USER_SEARCH': False})
   def test_user_search_must_be_enabled(self):

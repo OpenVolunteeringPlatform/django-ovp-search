@@ -3,7 +3,7 @@ coverage==4.3.4
 Django==1.10.5
 djangorestframework==3.5.3
 ovp-core==1.2.4
-ovp-users==1.1.6
+ovp-users==1.1.7
 ovp-uploads==1.0.2
 ovp-organizations==1.0.11
 ovp-projects==1.2.9
