@@ -99,5 +99,9 @@ v1.0.14
 * Add AND operator to skills and causes filter
 * Optimize UserSearch query
 
-v1.0.15[unreleased]
+v1.0.15
+-----------
+* Fix corrupt release
+
+v1.0.16[unreleased]
 -----------
