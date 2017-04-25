@@ -82,16 +82,16 @@ def create_sample_organizations():
 
 
 def create_sample_users():
-  user1 = User(name="user1", email="testmail1@test.com", password="test_returned")
+  user1 = User(name="user one", email="testmail1@test.com", password="test_returned")
   user1.save()
 
-  user2 = User(name="user2", email="testmail2@test.com", password="test_returned")
+  user2 = User(name="user two", email="testmail2@test.com", password="test_returned")
   user2.save()
 
-  user3 = User(name="user3", email="testmail3@test.com", password="test_returned")
+  user3 = User(name="user three", email="testmail3@test.com", password="test_returned")
   user3.save()
 
-  user4 = User(name="user4", email="testmail4@test.com", password="test_returned", public=False)
+  user4 = User(name="user four", email="testmail4@test.com", password="test_returned", public=False)
   user4.save()
 
   UserProfile = get_profile_model()
@@ -431,6 +431,26 @@ class UserSearchTestCase(TestCase):
     self.assertEqual(len(response.data["results"]), 2)
     self.assertEqual(str(response.data["results"][0]["profile"]["full_name"]), "user one")
     self.assertEqual(str(response.data["results"][1]["profile"]["full_name"]), "user two")
+
+  def test_name_filter(self):
+    """
+    Test searching with name filter returns organizations filtered by name(ngram)
+    """
+    response = self.client.get(reverse("search-users-list") + "?name=ser", format="json")
+    self.assertEqual(len(response.data["results"]), 3)
+
+    response = self.client.get(reverse("search-users-list") + "?name=one", format="json")
+
+    self.assertEqual(len(response.data["results"]), 1)
+    self.assertEqual(response.data["results"][0]["name"], "user one")
+
+    response = self.client.get(reverse("search-users-list") + "?name=two", format="json")
+    self.assertEqual(len(response.data["results"]), 1)
+    self.assertEqual(response.data["results"][0]["name"], "user two")
+
+    response = self.client.get(reverse("search-users-list") + "?name=three", format="json")
+    self.assertEqual(len(response.data["results"]), 1)
+    self.assertEqual(response.data["results"][0]["name"], "user three")
 
   @override_settings(OVP_SEARCH={'ENABLE_USER_SEARCH': False})
   def test_user_search_must_be_enabled(self):

@@ -121,10 +121,12 @@ class UserSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
     if not result:
       cause = params.get('cause', None)
       skill = params.get('skill', None)
+      name = params.get('name', None)
 
       queryset = SearchQuerySet().models(User)
       queryset = filters.by_skills(queryset, skill)
       queryset = filters.by_causes(queryset, cause)
+      queryset = filters.by_name(queryset, name)
 
       result_keys = [q.pk for q in queryset]
       related_field_name = get_profile_model()._meta.get_field('user').related_query_name()
