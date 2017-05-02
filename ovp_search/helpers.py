@@ -18,3 +18,13 @@ def whoosh_raw(t):
 
 def get_settings(string="OVP_SEARCH"):
   return getattr(settings, string, {})
+
+def get_cities(queryset):
+  cities = set()
+  for item in queryset:
+    for comp in item.address_components:
+      if "-administrative_area_level_2" in comp or "-locality" in comp:
+        city_name = comp.replace("-administrative_area_level_2", "").replace("-locality", "")
+        cities.add(city_name)
+
+  return cities

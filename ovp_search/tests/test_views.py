@@ -58,7 +58,7 @@ def create_sample_organizations():
   user.save()
 
   address1 = GoogleAddress(typed_address="São paulo, SP - Brazil")
-  address2 = GoogleAddress(typed_address="Campinas, SP - Brazil")
+  address2 = GoogleAddress(typed_address="Santo André, SP - Brazil")
   address3 = GoogleAddress(typed_address="New york - United States")
   address4 = GoogleAddress(typed_address="New york - United States")
   address1.save()
@@ -528,9 +528,9 @@ class CityCountryTestCase(TestCase):
   def setUp(self):
     call_command('clear_index', '--noinput', verbosity=0)
     create_sample_projects()
+    create_sample_organizations()
 
-
-  def test_query_country(self):
+  def test_query_country_deprecated(self):
     client = APIClient()
 
     response = client.get(reverse("search-query-country", ["Brazil"]), format="json")
@@ -543,3 +543,27 @@ class CityCountryTestCase(TestCase):
     self.assertEqual(response.status_code, 200)
     self.assertEqual(len(response.data), 1)
     self.assertIn("New York", response.data)
+
+  def test_available_country_cities(self):
+    client = APIClient()
+
+    response = client.get(reverse("available-country-cities", ["Brazil"]), format="json")
+    self.assertEqual(response.status_code, 200)
+    self.assertEqual(len(response.data["projects"]), 1)
+    self.assertEqual(len(response.data["organizations"]), 1)
+    self.assertEqual(len(response.data["common"]), 1)
+    self.assertIn("Campinas", response.data["projects"])
+    self.assertIn("Santo André", response.data["organizations"])
+    self.assertIn("São Paulo", response.data["common"])
+
+    response = client.get(reverse("available-country-cities", ["United States"]), format="json")
+    self.assertEqual(response.status_code, 200)
+    self.assertEqual(len(response.data["projects"]), 0)
+    self.assertEqual(len(response.data["organizations"]), 0)
+    self.assertEqual(len(response.data["common"]), 1)
+    self.assertIn("New York", response.data["common"])
+
+  def test_available_country_cities_cache(self):
+    self.test_available_country_cities()
+    self.assertTrue(cache.get("available-cities-{}".format(hash("Brazil"))))
+    self.assertTrue(cache.get("available-cities-{}".format(hash("United States"))))

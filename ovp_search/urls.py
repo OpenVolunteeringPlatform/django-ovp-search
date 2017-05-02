@@ -16,5 +16,6 @@ urlpatterns = [
   url(r'^search/', include(project_search.urls)),
   url(r'^search/', include(organization_search.urls)),
   url(r'^search/', include(user_search.urls)),
-  url(r'^search/country-cities/(?P<country>[^/]+)/', views.query_country, name='search-query-country'),
+  url(r'^search/country-cities/(?P<country>[^/]+)/', views.query_country_deprecated, name='search-query-country'),
+  url(r'^search/available-cities/(?P<country>[^/]+)/', views.available_country_cities, name='available-country-cities'),
 ]

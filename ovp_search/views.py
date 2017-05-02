@@ -138,7 +138,8 @@ class UserSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
 
 
 @decorators.api_view(["GET"])
-def query_country(request, country):
+def query_country_deprecated(request, country):
+  # Legacy/deprecated route
   available_cities = []
 
   search_term = helpers.whoosh_raw("{}-country".format(country))
@@ -154,3 +155,33 @@ def query_country(request, country):
   available_cities.sort()
 
   return response.Response(available_cities)
+
+
+@decorators.api_view(["GET"])
+def available_country_cities(request, country):
+  key = "available-cities-{}".format(hash(country))
+  cache_ttl = 120
+  result = cache.get(key)
+
+  if not result:
+    result = {"projects": [], "organizations": [], "common": []}
+
+    search_term = helpers.whoosh_raw("{}-country".format(country))
+
+    queryset = SearchQuerySet().models(Project).filter(address_components__exact=search_term, published=True, closed=False)
+    projects = helpers.get_cities(queryset)
+
+    queryset = SearchQuerySet().models(Organization).filter(address_components__exact=search_term, published=True)
+    organizations = helpers.get_cities(queryset)
+
+    common = projects & organizations
+    projects = projects - common
+    organizations = organizations - common
+
+    result["common"] = sorted(common)
+    result["projects"] = sorted(projects)
+    result["organizations"] = sorted(organizations)
+
+    cache.set(key, result, cache_ttl)
+
+  return response.Response(result)
