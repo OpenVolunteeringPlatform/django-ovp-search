@@ -45,7 +45,7 @@ class OrganizationSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet)
       name = params.get('name', None)
 
       queryset = SearchQuerySet().models(Organization)
-      queryset = queryset.filter(highlighted=True) if highlighted else queryset
+      queryset = queryset.filter(highlighted=1) if highlighted else queryset
       queryset = queryset.filter(content=query) if query else queryset
       queryset = filters.by_name_autocomplete(queryset, name) if name else queryset
       queryset = filters.by_published(queryset, published)
@@ -82,7 +82,7 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
       published = params.get('published', 'true')
 
       queryset = SearchQuerySet().models(Project)
-      queryset = queryset.filter(highlighted=True) if highlighted else queryset
+      queryset = queryset.filter(highlighted=1) if highlighted else queryset
       queryset = queryset.filter(content=query) if query else queryset
       queryset = filters.by_published(queryset, published)
       queryset = filters.by_address(queryset, address, project=True)
@@ -168,10 +168,10 @@ def available_country_cities(request, country):
 
     search_term = helpers.whoosh_raw("{}-country".format(country))
 
-    queryset = SearchQuerySet().models(Project).filter(address_components__exact=search_term, published=True, closed=False)
+    queryset = SearchQuerySet().models(Project).filter(address_components__exact=search_term, published=1, closed=0)
     projects = helpers.get_cities(queryset)
 
-    queryset = SearchQuerySet().models(Organization).filter(address_components__exact=search_term, published=True)
+    queryset = SearchQuerySet().models(Organization).filter(address_components__exact=search_term, published=1)
     organizations = helpers.get_cities(queryset)
 
     common = projects & organizations

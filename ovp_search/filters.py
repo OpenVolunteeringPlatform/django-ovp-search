@@ -102,9 +102,9 @@ def by_causes(queryset, cause_string=None):
 def by_published(queryset, published_string='true'):
   """ Filter queryset by publish status """
   if published_string == 'true':
-    queryset = queryset.filter(published=True)
+    queryset = queryset.filter(published=1)
   elif published_string == 'false':
-    queryset = queryset.filter(published=False)
+    queryset = queryset.filter(published=0)
   # Any other value will return both published and unpublished
   return queryset
 
