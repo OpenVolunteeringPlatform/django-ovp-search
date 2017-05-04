@@ -191,7 +191,7 @@ class ProjectSearchTestCase(TestCase):
     Test searching with address filter returns only results filtered by address
     """
     # Filter by city
-    response = self.client.get(reverse("search-projects-list") + '?address={"address_components":[{"types":["locality"], "long_name":"São Paulo"}]}', format="json")
+    response = self.client.get(reverse("search-projects-list") + '?address={"address_components":[{"types":["locality", "administrative_area_level_2"], "long_name":"São Paulo"}]}', format="json")
     self.assertEqual(len(response.data["results"]), 1)
 
     # Filter by state

@@ -132,22 +132,24 @@ def by_address(queryset, address='', project=False):
     address = json.loads(address)
 
     if u'address_components' in address:
-      types = []
+      q_objs = []
 
       if len(address[u'address_components']):
         for component in address[u'address_components']:
-          for component_type in component[u'types']:
-            type_string = u"{}-{}".format(component[u'long_name'], component_type).strip()
+          q_obj = SQ()
 
-            if type_string not in types:
-              types.append(type_string)
+          for component_type in component[u'types']:
+            type_string = helpers.whoosh_raw(u"{}-{}".format(component[u'long_name'], component_type).strip())
+            q_obj.add(SQ(address_components=type_string), SQ.OR)
+
+          q_objs.append(q_obj)
 
         # Filter all address components
-        for address_type in types:
-          queryset = queryset.filter(address_components=helpers.whoosh_raw(address_type))
+        for obj in q_objs:
+          queryset = queryset.filter(obj)
       else: # remote projects
         if project:
-          queryset = queryset.filter(can_be_done_remotely=True)
+          queryset = queryset.filter(can_be_done_remotely=1)
   return queryset
 
 def filter_out(queryset, setting_name):
