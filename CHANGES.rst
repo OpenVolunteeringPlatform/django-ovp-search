@@ -107,3 +107,4 @@ v1.0.16[unreleased]
 -----------
 * Add name filtering to users
 * Deprecate /country-cities/ route and implement /available-cities/ route
+* Fix UserSearchResource name/autocompletion filtering

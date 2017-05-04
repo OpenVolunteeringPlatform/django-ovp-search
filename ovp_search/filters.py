@@ -75,7 +75,7 @@ def get_operator_and_items(string=''):
 
   return SQ.OR, items
 
-def by_skills(queryset, skill_string=''):
+def by_skills(queryset, skill_string=None):
   """ Filter queryset by a comma delimeted skill list """
   if skill_string:
     operator, items = get_operator_and_items(skill_string)
@@ -87,7 +87,7 @@ def by_skills(queryset, skill_string=''):
   return queryset
 
 
-def by_causes(queryset, cause_string=''):
+def by_causes(queryset, cause_string=None):
   """ Filter queryset by a comma delimeted cause list """
   if cause_string:
     operator, items = get_operator_and_items(cause_string)
