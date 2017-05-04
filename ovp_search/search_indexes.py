@@ -91,7 +91,7 @@ class OrganizationIndex(indexes.SearchIndex, indexes.Indexable, CausesMixin, Add
 
 
 class UserIndex(indexes.SearchIndex, indexes.Indexable, AddressComponentsMixin):
-  name = indexes.NgramField(model_attr='name')
+  name = indexes.EdgeNgramField(model_attr='name')
   text = indexes.CharField(document=True)
   causes = indexes.MultiValueField(faceted=True)
   skills = indexes.MultiValueField(faceted=True)

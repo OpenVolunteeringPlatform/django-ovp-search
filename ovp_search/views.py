@@ -124,13 +124,9 @@ class UserSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
       name = params.get('name', None)
 
       queryset = SearchQuerySet().models(User)
-      print(0, queryset.count())
-      queryset = filters.by_skills(queryset, skill)# if skill else queryset
-      print(1, queryset.count())
-      queryset = filters.by_causes(queryset, cause)# if cause else queryset
-      print(2, queryset.count())
-      queryset = filters.by_name_autocomplete(queryset, name)# if name else queryset
-      print(3, queryset.count(), 'name', name)
+      queryset = filters.by_skills(queryset, skill)
+      queryset = filters.by_causes(queryset, cause)
+      queryset = filters.by_name_autocomplete(queryset, name)
 
       result_keys = [q.pk for q in queryset]
       related_field_name = get_profile_model()._meta.get_field('user').related_query_name()
