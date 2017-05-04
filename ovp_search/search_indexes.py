@@ -81,6 +81,7 @@ class OrganizationIndex(indexes.SearchIndex, indexes.Indexable, CausesMixin, Add
   highlighted = indexes.BooleanField(model_attr='highlighted')
   address_components = indexes.MultiValueField(faceted=True)
   published = indexes.BooleanField(model_attr='published')
+  deleted = indexes.BooleanField(model_attr='deleted')
 
 
   def get_model(self):

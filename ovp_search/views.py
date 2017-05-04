@@ -179,10 +179,10 @@ def available_country_cities(request, country):
 
     search_term = helpers.whoosh_raw("{}-country".format(country))
 
-    queryset = SearchQuerySet().models(Project).filter(address_components__exact=search_term, published=1, closed=0)
+    queryset = SearchQuerySet().models(Project).filter(address_components__exact=search_term, published=1, closed=0, deleted=0)
     projects = helpers.get_cities(queryset)
 
-    queryset = SearchQuerySet().models(Organization).filter(address_components__exact=search_term, published=1)
+    queryset = SearchQuerySet().models(Organization).filter(address_components__exact=search_term, published=1, deleted=0)
     organizations = helpers.get_cities(queryset)
 
     common = projects & organizations
