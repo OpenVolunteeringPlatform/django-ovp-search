@@ -47,7 +47,7 @@ class OrganizationSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet)
       queryset = SearchQuerySet().models(Organization)
       queryset = queryset.filter(highlighted=1) if highlighted else queryset
       queryset = queryset.filter(content=query) if query else queryset
-      queryset = filters.by_name_autocomplete(queryset, name) if name else queryset
+      queryset = filters.by_name(queryset, name) if name else queryset
       queryset = filters.by_published(queryset, published)
       queryset = filters.by_address(queryset, address) if address else queryset
       queryset = filters.by_causes(queryset, cause) if cause else queryset
@@ -126,7 +126,7 @@ class UserSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
       queryset = SearchQuerySet().models(User)
       queryset = filters.by_skills(queryset, skill)
       queryset = filters.by_causes(queryset, cause)
-      queryset = filters.by_name_autocomplete(queryset, name)
+      queryset = filters.by_name(queryset, name)
 
       result_keys = [q.pk for q in queryset]
       related_field_name = get_profile_model()._meta.get_field('user').related_query_name()

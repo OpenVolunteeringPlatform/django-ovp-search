@@ -115,12 +115,6 @@ def by_name(queryset, name=None):
     queryset = queryset.filter(name=name)
   return queryset
 
-def by_name_autocomplete(queryset, name=None):
-  """ Filter queryset by name, using char wide auto-completion """
-  if name:
-    queryset = queryset.autocomplete(name=name)
-  return queryset
-
 
 def by_address(queryset, address='', project=False):
   """
