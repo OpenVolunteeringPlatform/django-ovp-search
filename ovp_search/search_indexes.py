@@ -35,7 +35,7 @@ class AddressComponentsMixin:
 Indexes
 """
 class ProjectIndex(indexes.SearchIndex, indexes.Indexable, SkillsMixin, CausesMixin, AddressComponentsMixin):
-  name = indexes.NgramField(model_attr='name')
+  name = indexes.EdgeNgramField(model_attr='name')
   causes = indexes.MultiValueField(faceted=True)
   text = indexes.CharField(document=True, use_template=True)
   skills = indexes.MultiValueField(faceted=True)
@@ -75,7 +75,7 @@ class ProjectIndex(indexes.SearchIndex, indexes.Indexable, SkillsMixin, CausesMi
 
 
 class OrganizationIndex(indexes.SearchIndex, indexes.Indexable, CausesMixin, AddressComponentsMixin):
-  name = indexes.NgramField(model_attr='name')
+  name = indexes.EdgeNgramField(model_attr='name')
   causes = indexes.MultiValueField(faceted=True)
   text = indexes.CharField(document=True, use_template=True)
   highlighted = indexes.BooleanField(model_attr='highlighted')
