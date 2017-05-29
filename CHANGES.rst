@@ -111,3 +111,4 @@ v1.0.16[unreleased]
 * Fix haystack filter when using ElasticSearch as backend
 * Allow filtering a component by multiple types using an OR filter. (Pass multiple components with different types to use AND filter)
 * Name field becomes EdgeNgram on all indexes
+* On ProjectSearchResource, add setting to include closed projects on query by default

@@ -65,6 +65,14 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
   filter_backends = (filters.ProjectRelevanceOrderingFilter,)
   ordering_fields = ('name', 'slug', 'details', 'description', 'highlighted', 'published_date', 'created_date', 'max_applies', 'minimum_age', 'hidden_address', 'crowdfunding', 'public_project', 'relevance')
 
+  def get_base_queryset(self, pks = None, closed_clause=None):
+    base_queryset = Project.objects.filter(deleted=False)
+    if closed_clause is None:
+      closed_clause = helpers.get_settings().get('PROJECTS', {}).get('DEFAULT_INCLUDE_CLOSED', None)
+
+    base_queryset = base_queryset if closed_clause else base_queryset.filter(closed=False)
+    return base_queryset.filter(pk__in=pks) if pks else base_queryset
+
   def get_queryset(self):
     params = self.request.GET
 
@@ -91,7 +99,7 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
       queryset = filters.by_causes(queryset, cause)
 
       result_keys = [q.pk for q in queryset]
-      result = Project.objects.filter(pk__in=result_keys, deleted=False, closed=False).prefetch_related('skills', 'causes').select_related('address', 'owner')
+      result = self.get_base_queryset(result_keys).prefetch_related('skills', 'causes').select_related('address', 'owner')
       result = filters.filter_out(result, "PROJECTS")
       cache.set(key, result, cache_ttl)
 
