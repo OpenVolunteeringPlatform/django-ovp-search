@@ -23,7 +23,7 @@ class AddressComponentsMixin:
   def prepare_address_components(self, obj):
     types = []
 
-    if obj.address:
+    if obj.address and type(obj.address) == GoogleAddress:
       for component in obj.address.address_components.all():
         for component_type in component.types.all():
           types.append(u'{}-{}'.format(component.long_name, component_type.name))
