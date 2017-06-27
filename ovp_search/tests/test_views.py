@@ -42,6 +42,8 @@ def create_sample_projects():
   project = Project(name="test project2", slug="test-slug2", details="abc", description="abc", owner=user, address=address2, highlighted=True, published=True)
   project.save()
   project.causes.add(Cause.objects.get(pk=2))
+  job = Job(can_be_done_remotely=True, project=project)
+  job.save()
 
   project = Project(name="test project3", slug="test-slug3", details="abc", description="abc", owner=user, address=address3, published=True)
   project.save()
@@ -125,10 +127,10 @@ class ProjectSearchTestCase(TestCase):
 
   def test_query_optimization(self):
     """
-    Test project search does only 3 queries
+    Test project search does only 4 queries
     """
     cache.clear()
-    with self.assertNumQueries(3):
+    with self.assertNumQueries(4):
       response = self.client.get(reverse("search-projects-list"), format="json")
 
   def test_query_gets_cached(self):
@@ -204,7 +206,7 @@ class ProjectSearchTestCase(TestCase):
 
     # Filter remote jobs
     response = self.client.get(reverse("search-projects-list") + '?address={"address_components":[]}', format="json")
-    self.assertEqual(len(response.data["results"]), 1)
+    self.assertEqual(len(response.data["results"]), 2)
 
   def test_causes_filter(self):
     """

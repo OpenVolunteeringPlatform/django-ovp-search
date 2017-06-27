@@ -73,7 +73,7 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
     base_queryset = base_queryset if closed_clause else base_queryset.filter(closed=False)
     if len(pks) > 0:
       return base_queryset.filter(pk__in=pks)
-    
+
     return base_queryset.filter(pk__in=[])
 
   def get_queryset(self):
@@ -102,7 +102,7 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
       queryset = filters.by_causes(queryset, cause)
 
       result_keys = [q.pk for q in queryset]
-      result = self.get_base_queryset(result_keys).prefetch_related('skills', 'causes').select_related('address', 'owner')
+      result = self.get_base_queryset(result_keys).prefetch_related('skills', 'causes', 'job__dates').select_related('address', 'owner', 'work', 'job')
       result = filters.filter_out(result, "PROJECTS")
       cache.set(key, result, cache_ttl)
 
