@@ -61,8 +61,8 @@ def create_sample_organizations():
 
   address1 = GoogleAddress(typed_address="São paulo, SP - Brazil")
   address2 = GoogleAddress(typed_address="Santo André, SP - Brazil")
-  address3 = GoogleAddress(typed_address="New york - United States")
-  address4 = GoogleAddress(typed_address="New york - United States")
+  address3 = GoogleAddress(typed_address="New york, New york - United States")
+  address4 = GoogleAddress(typed_address="New york, New york - United States")
   address1.save()
   address2.save()
   address3.save()
