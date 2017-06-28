@@ -2,7 +2,7 @@ from haystack import indexes
 from django.db.models import Q
 from ovp_projects.models import Project, Work, Job
 from ovp_organizations.models import Organization
-from ovp_core.models import GoogleAddress
+from ovp_core.models import GoogleAddress, SimpleAddress
 from ovp_users.models import User
 from ovp_users.models.profile import get_profile_model
 
@@ -23,10 +23,17 @@ class AddressComponentsMixin:
   def prepare_address_components(self, obj):
     types = []
 
-    if obj.address and type(obj.address) == GoogleAddress:
-      for component in obj.address.address_components.all():
-        for component_type in component.types.all():
-          types.append(u'{}-{}'.format(component.long_name, component_type.name))
+    if obj.address:
+      if type(obj.address) == GoogleAddress:
+        for component in obj.address.address_components.all():
+          for component_type in component.types.all():
+            types.append(u'{}-{}'.format(component.long_name, component_type.name))
+
+      if type(obj.address) == SimpleAddress:
+        if obj.address.city:
+          types.append(u'{}-{}'.format(obj.address.city, 'locality'))
+        if obj.address.country:
+          types.append(u'{}-{}'.format(obj.address.country, 'country'))
 
     return types
 
