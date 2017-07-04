@@ -73,7 +73,7 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
     base_queryset = base_queryset if closed_clause else base_queryset.filter(closed=False)
     if len(pks) > 0:
       return base_queryset.filter(pk__in=pks)
-
+    
     return base_queryset.filter(pk__in=[])
 
   def get_queryset(self):
@@ -91,6 +91,7 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
       highlighted = (params.get('highlighted') == 'true')
       name = params.get('name', None)
       published = params.get('published', 'true')
+      organization = params.get('organization', None)
 
       queryset = SearchQuerySet().models(Project)
       queryset = queryset.filter(highlighted=1) if highlighted else queryset
@@ -102,7 +103,12 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
       queryset = filters.by_causes(queryset, cause)
 
       result_keys = [q.pk for q in queryset]
-      result = self.get_base_queryset(result_keys).prefetch_related('skills', 'causes', 'job__dates').select_related('address', 'owner', 'work', 'job')
+      if organization:
+        org = [o for o in organization.split(',')]
+        result = self.get_base_queryset(result_keys).prefetch_related('skills', 'causes').select_related('address', 'owner').filter(organization__in=org)
+      else:
+        result = self.get_base_queryset(result_keys).prefetch_related('skills', 'causes').select_related('address', 'owner')
+      
       result = filters.filter_out(result, "PROJECTS")
       cache.set(key, result, cache_ttl)
 
@@ -179,10 +185,10 @@ def available_country_cities(request, country):
 
     search_term = helpers.whoosh_raw("{}-country".format(country))
 
-    queryset = SearchQuerySet().models(Project).filter(address_components__exact=search_term, published=1, closed=0, deleted=0)
+    queryset = SearchQuerySet().models(Project).filter(address_components__exact=search_term, published=1, closed=0)
     projects = helpers.get_cities(queryset)
 
-    queryset = SearchQuerySet().models(Organization).filter(address_components__exact=search_term, published=1, deleted=0)
+    queryset = SearchQuerySet().models(Organization).filter(address_components__exact=search_term, published=1)
     organizations = helpers.get_cities(queryset)
 
     common = projects & organizations
