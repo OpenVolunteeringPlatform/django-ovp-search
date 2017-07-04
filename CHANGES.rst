@@ -120,3 +120,4 @@ v1.0.17[unreleased]
 * Fix query optimization to now that ProjectSearchSerializer includes Disponibility
 * Index SimpleAddress cities
 * Add filter by organization in projects
+* Add filter by not_organization in projects

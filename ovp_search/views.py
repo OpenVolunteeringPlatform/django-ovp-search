@@ -92,6 +92,7 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
       name = params.get('name', None)
       published = params.get('published', 'true')
       organization = params.get('organization', None)
+      not_organization = params.get('not_organization', None)
 
       queryset = SearchQuerySet().models(Project)
       queryset = queryset.filter(highlighted=1) if highlighted else queryset
@@ -103,7 +104,10 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
       queryset = filters.by_causes(queryset, cause)
 
       result_keys = [q.pk for q in queryset]
-      if organization:
+      if not_organization:
+        org = [o for o in not_organization.split(',')]
+        result = self.get_base_queryset(result_keys).prefetch_related('skills', 'causes').select_related('address', 'owner').exclude(organization__in=org)
+      elif organization:
         org = [o for o in organization.split(',')]
         result = self.get_base_queryset(result_keys).prefetch_related('skills', 'causes').select_related('address', 'owner').filter(organization__in=org)
       else:
