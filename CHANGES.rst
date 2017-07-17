@@ -121,3 +121,4 @@ v1.0.17[unreleased]
 * Index SimpleAddress cities
 * Add filter by organization in projects
 * Add filter by not_organization in projects
+* Deprecate global 'PAGINATE_BY_PARAM' and use a pagination class (DefaultSearchPagination)

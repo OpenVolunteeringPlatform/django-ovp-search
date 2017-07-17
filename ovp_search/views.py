@@ -19,14 +19,22 @@ from rest_framework import viewsets
 from rest_framework import mixins
 from rest_framework import response
 from rest_framework import decorators
+from rest_framework import pagination
 
 from haystack.query import SearchQuerySet, SQ
 
+
+class DefaultSearchPagination(pagination.PageNumberPagination):
+  page_size = 20
+  page_size_query_param = 'page_size'
+  max_page_size = 30
 
 class OrganizationSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
   serializer_class = OrganizationSearchSerializer
   filter_backends = (filters.OrderingFilter,)
   ordering_fields = ('slug', 'name', 'website', 'facebook_page', 'details', 'description', 'type', 'hidden_address')
+
+  pagination_class = DefaultSearchPagination
 
   def get_queryset(self):
     params = self.request.GET
@@ -65,10 +73,12 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
   filter_backends = (filters.ProjectRelevanceOrderingFilter,)
   ordering_fields = ('name', 'slug', 'details', 'description', 'highlighted', 'published_date', 'created_date', 'max_applies', 'minimum_age', 'hidden_address', 'crowdfunding', 'public_project', 'relevance')
 
+  pagination_class = DefaultSearchPagination
+
   def get_base_queryset(self, pks = None, closed_clause=None):
     base_queryset = Project.objects.filter(deleted=False)
     if closed_clause is None:
-      closed_clause = helpers.get_settings().get('PROJECTS', {}).get('DEFAULT_INCLUDE_CLOSED', None)
+      closed_clause = helpers.get_().get('PROJECTS', {}).get('DEFAULT_INCLUDE_CLOSED', None)
 
     base_queryset = base_queryset if closed_clause else base_queryset.filter(closed=False)
     if len(pks) > 0:
@@ -123,6 +133,8 @@ class UserSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
   serializer_class = get_user_search_serializer()
   filter_backends = (filters.OrderingFilter,)
   ordering_fields = ('slug', 'name')
+
+  pagination_class = DefaultSearchPagination
 
   def __init__(self, *args, **kwargs):
     self.check_user_search_enabled()
