@@ -78,12 +78,12 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
   def get_base_queryset(self, pks = None, closed_clause=None):
     base_queryset = Project.objects.filter(deleted=False)
     if closed_clause is None:
-      closed_clause = helpers.get_().get('PROJECTS', {}).get('DEFAULT_INCLUDE_CLOSED', None)
+      closed_clause = helpers.get_settings().get('PROJECTS', {}).get('DEFAULT_INCLUDE_CLOSED', None)
 
     base_queryset = base_queryset if closed_clause else base_queryset.filter(closed=False)
     if len(pks) > 0:
       return base_queryset.filter(pk__in=pks)
-    
+
     return base_queryset.filter(pk__in=[])
 
   def get_queryset(self):
@@ -122,7 +122,7 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
         result = self.get_base_queryset(result_keys).prefetch_related('skills', 'causes').select_related('address', 'owner').filter(organization__in=org)
       else:
         result = self.get_base_queryset(result_keys).prefetch_related('skills', 'causes').select_related('address', 'owner')
-      
+
       result = filters.filter_out(result, "PROJECTS")
       cache.set(key, result, cache_ttl)
 
