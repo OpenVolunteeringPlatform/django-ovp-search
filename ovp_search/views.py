@@ -77,9 +77,8 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
 
   def get_base_queryset(self, pks = None, closed_clause=None):
     base_queryset = Project.objects.filter(deleted=False)
-    if closed_clause is None:
-      closed_clause = helpers.get_settings().get('PROJECTS', {}).get('DEFAULT_INCLUDE_CLOSED', None)
-
+    # if closed_clause is None:
+    closed_clause = helpers.get_settings('OVP_PROJECTS').get('DEFAULT_INCLUDE_CLOSED', None)
     base_queryset = base_queryset if closed_clause else base_queryset.filter(closed=False)
     if len(pks) > 0:
       return base_queryset.filter(pk__in=pks)
