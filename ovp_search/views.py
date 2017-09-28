@@ -70,7 +70,7 @@ class OrganizationSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet)
 
 class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
   serializer_class = ProjectSearchSerializer
-  filter_backends = (filters.OrderingFilter,)
+  filter_backends = (filters.ProjectRelevanceOrderingFilter,)
   ordering_fields = ('name', 'slug', 'details', 'description', 'highlighted', 'published_date', 'created_date', 'max_applies', 'minimum_age', 'hidden_address', 'crowdfunding', 'public_project', 'relevance', 'closed')
 
   pagination_class = DefaultSearchPagination
