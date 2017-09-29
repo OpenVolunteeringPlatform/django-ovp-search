@@ -70,7 +70,7 @@ class OrganizationSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet)
 
 class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
   serializer_class = ProjectSearchSerializer
-  filter_backends = (filters.OrderingFilter,)
+  filter_backends = (filters.ProjectRelevanceOrderingFilter,)
   ordering_fields = ('name', 'slug', 'details', 'description', 'highlighted', 'published_date', 'created_date', 'max_applies', 'minimum_age', 'hidden_address', 'crowdfunding', 'public_project', 'relevance', 'closed')
 
   pagination_class = DefaultSearchPagination
@@ -126,24 +126,6 @@ class ProjectSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
       cache.set(key, result, cache_ttl)
 
     return result
-
-
-  def list(self, request, *args, **kwargs):
-    queryset = self.filter_queryset(self.get_queryset())
-
-    # TODO: FIX!
-    # https://code.djangoproject.com/ticket/28657
-    for prj in queryset:
-      pass
-
-    page = self.paginate_queryset(queryset)
-    if page is not None:
-      serializer = self.get_serializer(page, many=True)
-      return self.get_paginated_response(serializer.data)
-
-    serializer = self.get_serializer(queryset, many=True)
-    return response.Response({"results": serializer.data})
-    return response.Response(serializer.data)
 
 
 class UserSearchResource(mixins.ListModelMixin, viewsets.GenericViewSet):
