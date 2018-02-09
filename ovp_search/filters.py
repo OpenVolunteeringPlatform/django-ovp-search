@@ -127,6 +127,9 @@ def by_address(queryset, address='', project=False):
     if u'address_components' in address:
       q_objs = []
 
+      """
+      Caribbean filter
+      """
       if len(address[u'address_components']):
         if address[u'address_components'][0]['long_name'] == 'Caribbean':
           queryset = queryset.filter(
@@ -159,7 +162,6 @@ def by_address(queryset, address='', project=False):
 
           for component_type in component[u'types']:
             type_string = helpers.whoosh_raw(u"{}-{}".format(component[u'long_name'], component_type).strip())
-            print(type_string)
             q_obj.add(SQ(address_components=type_string), SQ.OR)
 
           q_objs.append(q_obj)
