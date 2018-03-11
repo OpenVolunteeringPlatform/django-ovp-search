@@ -133,25 +133,10 @@ def by_address(queryset, address='', project=False):
       if len(address[u'address_components']):
         if address[u'address_components'][0]['long_name'] == 'Caribbean':
           queryset = queryset.filter(
-            SQ(address_components=helpers.whoosh_raw(u"{}-{}".format('Puerto Rico', 'country').strip())) |
-            SQ(address_components=helpers.whoosh_raw(u"{}-{}".format('Cuba', 'country').strip())) |
             SQ(address_components=helpers.whoosh_raw(u"{}-{}".format('Jamaica', 'country').strip())) |
-            SQ(address_components=helpers.whoosh_raw(u"{}-{}".format('Barbados', 'country').strip())) |
-            SQ(address_components=helpers.whoosh_raw(u"{}-{}".format('Bermuda', 'country').strip())) |
-            SQ(address_components=helpers.whoosh_raw(u"{}-{}".format('Cayman Islands', 'country').strip())) |
-            SQ(address_components=helpers.whoosh_raw(u"{}-{}".format('Dominica', 'country').strip())) |
-            SQ(address_components=helpers.whoosh_raw(u"{}-{}".format('Grenadines Islands', 'country').strip())) |
-            SQ(address_components=helpers.whoosh_raw(u"{}-{}".format('Guyana', 'country').strip())) |
-            SQ(address_components=helpers.whoosh_raw(u"{}-{}".format('Guadeloupe', 'country').strip())) |
-            SQ(address_components=helpers.whoosh_raw(u"{}-{}".format('Martinique', 'country').strip())) |
-            SQ(address_components=helpers.whoosh_raw(u"{}-{}".format('Mexico', 'country').strip())) |
-            SQ(address_components=helpers.whoosh_raw(u"{}-{}".format('Montserrat', 'country').strip())) |
-            SQ(address_components=helpers.whoosh_raw(u"{}-{}".format('Caribisch Nederland', 'country').strip())) |
             SQ(address_components=helpers.whoosh_raw(u"{}-{}".format('Saint Lucia', 'country').strip())) |
-            SQ(address_components=helpers.whoosh_raw(u"{}-{}".format('Saint Vincent and the Grenadines', 'country').strip())) |
             SQ(address_components=helpers.whoosh_raw(u"{}-{}".format('Suriname', 'country').strip())) |
-            SQ(address_components=helpers.whoosh_raw(u"{}-{}".format('Trinidad & Tobago', 'country').strip())) |
-            SQ(address_components=helpers.whoosh_raw(u"{}-{}".format('British Virgin Islands', 'country').strip()))
+            SQ(address_components=helpers.whoosh_raw(u"{}-{}".format('Trinidad & Tobago', 'country').strip()))
           )
 
           return queryset
