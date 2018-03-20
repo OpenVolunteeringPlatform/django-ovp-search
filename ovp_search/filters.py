@@ -134,6 +134,7 @@ def by_address(queryset, address='', project=False):
         if address[u'address_components'][0]['long_name'] == 'Caribbean':
           queryset = queryset.filter(
             SQ(address_components=helpers.whoosh_raw(u"{}-{}".format('Jamaica', 'country').strip())) |
+            SQ(address_components=helpers.whoosh_raw(u"{}-{}".format('Haiti', 'country').strip())) |
             SQ(address_components=helpers.whoosh_raw(u"{}-{}".format('Saint Lucia', 'country').strip())) |
             SQ(address_components=helpers.whoosh_raw(u"{}-{}".format('Suriname', 'country').strip())) |
             SQ(address_components=helpers.whoosh_raw(u"{}-{}".format('Trinidad & Tobago', 'country').strip()))
