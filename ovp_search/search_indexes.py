@@ -77,7 +77,7 @@ class ProjectIndex(indexes.SearchIndex, indexes.Indexable, SkillsMixin, CausesMi
     return Project
 
   def index_queryset(self, using=None):
-    return self.get_model().objects.filter(closed=False, deleted=False)
+    return self.get_model().objects.filter(deleted=False)
 
 
 
