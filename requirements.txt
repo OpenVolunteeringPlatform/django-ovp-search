@@ -1,7 +1,7 @@
 codecov==2.0.5
 coverage==4.3.4
 Django==1.10.5
-djangorestframework==3.5.3
+djangorestframework==3.11.2
 ovp-core==1.2.7
 ovp-users==1.1.8
 ovp-uploads==1.0.4
